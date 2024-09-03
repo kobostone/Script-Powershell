@@ -20,4 +20,13 @@ Get-DistributionGroupMember -Identity "COCOORD"  | Export-Excel -Path 'C:\Script
 Get-DistributionGroupMember -Identity "COCOORD"  | Select-Object -Property "DisplayName", "PrimarySmtpAddress"| Export-Excel -Path 'C:\Scripts\AD-utilisateurs1.xlsx'
 
 
+## CREATION  d'un FILTER******  OK
+
+$Filter  = "((RecipientType -eq 'UserMailbox') -and (((Co -eq 'France') -or (Co -like 'Belgique*') -or (Co -like 'Italie*')) -and ((CustomAttribute3 -eq 'ANIC') -or (CustomAttribute3 -eq 'RABE') -or (CustomAttribute3 -eq 'DABE'))))" 
+Get-Recipient -RecipientPreviewFilter $Filter | ft displayname, title
+
+
+
+
+
 
