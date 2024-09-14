@@ -20,13 +20,29 @@ Get-DistributionGroupMember -Identity "COCOORD"  | Select-Object -Property "Disp
 $membres = Get-DynamicDistributionGroup -Identity "LDD - FR - DIRECTION RH"
 Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter)   |Sort-Object -Property displayname| Format-Table -Property Name, StateOrProvince, CustomAttribute10, CountryOrRegion   | Out-File -FilePath  "C:\Rscripts\LDD_FR_DIRECTION_RH.txt"
 
+******
 
+
+## Extract members DDL
+$membres = Get-DynamicDistributionGroup -Identity "LDD - FR - DIRECTION RH"
+Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter)   |Sort-Object -Property displayname| Format-Table -Property Name, StateOrProvince, CustomAttribute10, CountryOrRegion   | Out-File -FilePath  "C:\Rscripts\LDD_FR_DIRECTION_RH.txt"
+------- 
+$membres = Get-DynamicDistributionGroup -Identity "LDD - FR - EXPL - CHARGÉS MAINTENANCE" 
+Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter) |Sort-Object -Property displayname| Format-Table -Property displayname, title, CustomAttribute3, CustomAttribute8 | Out-File -FilePath "C:\Rscripts\LDD_FR_EXPL_CHARGES_MAINTENANCE.txt"
+------
+$membres = Get-DynamicDistributionGroup -Identity "LDD - FR - EXPL - DOMRG1-NOROU - MAINTENANCE" 
+Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter) |Sort-Object -Property displayname| Format-Table -Property displayname, title, CustomAttribute3, CustomAttribute8 | Out-File -FilePath "C:\Rscripts\LDD_FR_EXPL_DOMRG1_NOROU_MAINTENANCE.txt"
+
+_________________________________________________________________________________
 ## CREATION  d'un FILTER
 
 $Filter  = "((RecipientType -eq 'UserMailbox') -and (((Co -eq 'France') -or (Co -like 'Belgique*') -or (Co -like 'Italie*')) -and ((CustomAttribute3 -eq 'ANIC') -or (CustomAttribute3 -eq 'RABE') -or (CustomAttribute3 -eq 'DABE'))))" 
 Get-Recipient -RecipientPreviewFilter $Filter | ft displayname, title
+------------------------------------------------------------------------
+$Filter  = "((RecipientType -eq 'UserMailbox') -and ((CustomAttribute8 -eq 'DOMRG1-NOROU') -and ((CustomAttribute3 -eq 'MESP') -or (CustomAttribute3 -eq 'MAIN') -or (CustomAttribute3 -eq 'MAINA') -or (CustomAttribute3 -eq 'ESVE') -or (CustomAttribute3 -eq 'REMT') -or (CustomAttribute3 -eq 'CMEV') -or (CustomAttribute3 -eq 'TECM') )))" 
+Get-Recipient -RecipientPreviewFilter $Filter |Sort-Object -Property displayname | ft displayname, title, PrimarySmtpAddress, CustomAttribute3, CustomAttribute8 
 
-
+______________________________________________________________________________
 ## CREATION  d'un DDL
 New-DynamicDistributionGroup -Name "LDD - FR - EXPL - DOMRG1-NOROU - MAINTENANCE" -RecipientFilter {(RecipientTypeDetails -eq 'UserMailbox') -and ((CustomAttribute8 -eq 'DOMRG1-NOROU') -and ((CustomAttribute3 -eq 'MESP') -or (CustomAttribute3 -eq 'MAIN') -or (CustomAttribute3 -eq 'MAINA') -or (CustomAttribute3 -eq 'ESVE') -or (CustomAttribute3 -eq 'REMT') -or (CustomAttribute3 -eq 'CMEV') -or (CustomAttribute3 -eq 'TECM')))}
 
