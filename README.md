@@ -17,13 +17,14 @@ Get-DistributionGroupMember -Identity "COCOORD"  | Export-Excel -Path 'C:\Script
 Get-DistributionGroupMember -Identity "COCOORD"  | Select-Object -Property "DisplayName", "PrimarySmtpAddress"| Export-Excel -Path 'C:\Scripts\AD-utilisateurs1.xlsx'
 
 ## Extract members DDL
-$membres = Get-DynamicDistributionGroup -Identity "LDD - FR - DIRECTION RH"
-Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter)   |Sort-Object -Property displayname| Format-Table -Property Name, StateOrProvince, CustomAttribute10, CountryOrRegion   | Out-File -FilePath  "C:\Rscripts\LDD_FR_DIRECTION_RH.txt"
 
-******
+****** SUR
+$membres = Get-DynamicDistributionGroup -Identity "LDD - FR - EXPL DOMITYS RSS - DIRECTEURS ADJOINTS" 
+Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter) | Format-Table -Property Name, location, CustomAttribute10, CountryOrRegion  | Out-File -FilePath  "C:\Rscripts\LDD_FR_RSS_DIRECTEURS_ADJOINTS2.txt"
 
 
 ## Extract members DDL
+
 $membres = Get-DynamicDistributionGroup -Identity "LDD - FR - DIRECTION RH"
 Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter)   |Sort-Object -Property displayname| Format-Table -Property Name, StateOrProvince, CustomAttribute10, CountryOrRegion   | Out-File -FilePath  "C:\Rscripts\LDD_FR_DIRECTION_RH.txt"
 ------- 
