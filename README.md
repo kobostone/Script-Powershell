@@ -49,7 +49,7 @@ Try     {
     $Result | Export-Excel -Path 'C:\Distribution-Group-Members06.xlsx'
 }      
 Catch {     
-    write-host -f Red "Error:" $_.Exception.Message
+    write-host -f Red "Error:" $_.Exception.Message      
 }
 
 
