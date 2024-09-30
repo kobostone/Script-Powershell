@@ -16,6 +16,48 @@ Get-DistributionGroupMember -Identity "COCOORD"  | Export-Excel -Path 'C:\Script
 
 Get-DistributionGroupMember -Identity "COCOORD"  | Select-Object -Property "DisplayName", "PrimarySmtpAddress"| Export-Excel -Path 'C:\Scripts\AD-utilisateurs1.xlsx'
 
+**************
+
+
+ 
+Try {
+    #Connect to Exchange Online
+    Connect-ExchangeOnline -ShowBanner:$False
+ 
+    #Get all Distribution Lists
+    $Result=@()   
+    $DistributionGroups = Get-DistributionGroup -ResultSize Unlimited | Select-Object -Property "DisplayName", "PrimarySmtpAddress" , "ManagedBy" 
+    $GroupsCount = $DistributionGroups.Count
+    $Counter = 1
+    $DistributionGroups | ForEach-Object {
+        Write-Progress -Activity "Processing Distribution List: $($_.DisplayName)" -Status "$Counter out of $GroupsCount completed" -PercentComplete (($Counter/$GroupsCount)*100)
+        $Group = $_
+        Get-DistributionGroupMember -Identity $Group.DisplayName  -ResultSize Unlimited | ForEach-Object {
+            $member = $_
+            $Result += New-Object PSObject -property @{
+            GroupName = $Group.DisplayName
+            GroupEmail = $Group.PrimarySmtpAddress
+            Member = $Member.DisplayName
+            EmailAddress = $Member.PrimarySMTPAddress
+            RecipientType= $Member.RecipientType
+		    ManBy = [string]$Group.ManagedBy
+            }
+        }
+    $Counter++
+    }
+    #Get Distribution List Members and Exports to xlsx
+    $Result | Export-Excel -Path 'C:\Distribution-Group-Members06.xlsx'
+}
+Catch {
+    write-host -f Red "Error:" $_.Exception.Message
+}
+
+
+
+***********
+
+
+
 ## Extract members DDL
 
 ****** SUR
