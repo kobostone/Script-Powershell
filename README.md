@@ -26,7 +26,7 @@ Try     {
  
     #Get all Distribution Lists
     $Result=@()   
-    $DistributionGroups = Get-DistributionGroup -ResultSize Unlimited | Select-Object -Property "DisplayName", "PrimarySmtpAddress" , "ManagedBy" 
+    $DistributionGroups = Get-DistributionGroup -ResultSize Unlimited | Select-Object -Property "DisplayName", "PrimarySmtpAddress", "ManagedBy" 
     $GroupsCount = $DistributionGroups.Count
     $Counter = 1
     $DistributionGroups | ForEach-Object {
