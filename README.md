@@ -21,7 +21,7 @@ Get-DistributionGroupMember -Identity "COCOORD"  | Select-Object -Property "Disp
 
  
 Try {
-    #Connect to Exchange Online
+    #Connect to Exchange Online    
     Connect-ExchangeOnline -ShowBanner:$False
  
     #Get all Distribution Lists
