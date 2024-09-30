@@ -20,7 +20,7 @@ Get-DistributionGroupMember -Identity "COCOORD"  | Select-Object -Property "Disp
 
 
  
-Try {
+Try     {
     #Connect to Exchange Online    
     Connect-ExchangeOnline -ShowBanner:$False
  
