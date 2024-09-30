@@ -48,7 +48,7 @@ Try     {
     #Get Distribution List Members and Exports to xlsx
     $Result | Export-Excel -Path 'C:\Distribution-Group-Members06.xlsx'
 }
-Catch {
+Catch {     
     write-host -f Red "Error:" $_.Exception.Message
 }
 
