@@ -6,8 +6,6 @@ Import-Module ExchangeOnlineManagement
 Connect-ExchangeOnline
 
 
-![image](https://github.com/user-attachments/assets/680e1353-4710-42f5-9ad4-d70bcaf17e4d)
-
 
 ## Extract members DL
 
@@ -140,4 +138,9 @@ Comment vérifier que l'opération a fonctionné ?
 La commande suivante affiche toutes les restrictions de remise de messages configurées pour la boîte aux lettres de LDD - EU - EXPL DOMITYS RSS - DIRECTEURS:
 
 Get-DynamicDistributionGroup -Identity "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS" | Format-List AcceptMessagesOnlyFrom,AcceptMessagesOnlyFromDLMembers
+
+
+# Retention d'une boite mail
+
+![image](https://github.com/user-attachments/assets/680e1353-4710-42f5-9ad4-d70bcaf17e4d)
 
