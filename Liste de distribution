@@ -1,1 +1,3 @@
+# S’approprier tous les groupes de distribution – Office 365
 
+Get-DistributionGroup |Set-DistributionGroup -ManagedBy “name@domain.org” –BypassSecurityGroupManagerCheck
