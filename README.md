@@ -11,9 +11,9 @@ Connect-ExchangeOnline
 
 Install-Module -Name ImportExcel
 
-Get-DistributionGroupMember -Identity "COCOORD"  | Export-Excel -Path 'C:\Scripts\AD-utilisateurs.xlsx'
+Get-DistributionGroupMember -Identity "COCOORD"  | Export-Excel -Path 'C:\Rscripts\AD-utilisateurs.xlsx'
 
-Get-DistributionGroupMember -Identity "COCOORD"  | Select-Object -Property "DisplayName", "PrimarySmtpAddress"| Export-Excel -Path 'C:\Scripts\AD-utilisateurs1.xlsx'
+Get-DistributionGroupMember -Identity "COCOORD"  | Select-Object -Property "DisplayName", "PrimarySmtpAddress"| Export-Excel -Path 'C:\Rscripts\AD-utilisateurs1.xlsx'
 
 **************
 
@@ -45,7 +45,7 @@ Try     {
     $Counter++
     }
     #Get Distribution List Members and Exports to xlsx
-    $Result | Export-Excel -Path 'C:\Distribution-Group-Members06.xlsx'
+    $Result | Export-Excel -Path 'C:\Rscripts\Distribution-Group-Members06.xlsx'
 }      
 Catch {     
     write-host -f Red "Error:" $_.Exception.Message      
@@ -54,7 +54,7 @@ Catch {
 
 
 ***********
-# Création et gestion des listes de distribution d
+# Création et gestion des listes de distribution 
 
 Dans Office 365, les listes de distribution sont un moyen efficace pour communiquer avec un groupe de personnes. 
 Elles permettent d’envoyer des courriels à plusieurs destinataires simultanément sans avoir à ajouter chaque contact individuellement. 
@@ -122,9 +122,41 @@ N’oubliez pas de vérifier les prérequis, comme les autorisations nécessaire
 
 
 ********
+# Afficher les membres d’un seul groupe de distribution dynamique:
 
+Get-Recipient -RecipientPreviewFilter (get-dynamicdistributiongroup "LDD - FR - EXPL DOMITYS RSS - DIRECTEURS ADJOINTS").RecipientFilter -OrganizationalUnit $_.RecipientContainer
+
+Vous pouvez également exporter facilement les membres de n’importe quel groupe de distribution vers un fichier CSV en exécutant :
+
+Get-Recipient -RecipientPreviewFilter (get-dynamicdistributiongroup <name of group>).RecipientFilter -OrganizationalUnit $_.RecipientContainer | Select Displayname | Export-Csv "<path of target CSV file>"
 
 ## Extract members DDL
+
+# Générer une liste de membres de groupe dynamiques avec leur appartenance au groupe indiquée dans une colonne distincte :
+
+foreach ($group in (Get-DynamicDistributionGroup)) {Get-Recipient -RecipientPreviewFilter $group.RecipientFilter -OrganizationalUnit $group.RecipientContainer -ResultSize Unlimited| Select DisplayName,@{n="Group";e={$group.name}}}
+
+# Exporter le résultat du script dans un fichier séparé par des virgules :
+
+foreach ($group in (Get-DynamicDistributionGroup)) {Get-Recipient -RecipientPreviewFilter $group.RecipientFilter -OrganizationalUnit $group.RecipientContainer -ResultSize Unlimited | Select DisplayName,@{n="Group";e={$group.name}} | Export-Csv "C:\Rscripts\LDD_members.csv" -Append} 
+
+# Exporter les membres de groupes de distribution dynamique distincts vers des fichiers CSV distincts :
+
+foreach ($group in (Get-DynamicDistributionGroup)) {Get-Recipient -RecipientPreviewFilter $group.RecipientFilter -OrganizationalUnit $group.RecipientContainer -ResultSize Unlimited| Select DisplayName | Export-Csv "c:\Rscripts\$group.members.csv"}
+
+**
+L’affichage des membres de tous les groupes de distribution dynamique n’est pas beaucoup plus difficile. 
+
+foreach ($group in (Get-DynamicDistributionGroup)) {Get-Recipient -RecipientPreviewFilter $group.RecipientFilter -OrganizationalUnit $group.RecipientContainer | ft @{Expression={$_.displayname};Label=($group).name}}
+
+
+***
+
+Les résultats de la commande ci-dessus peuvent être exportés dans un fichier, mais comme ils sont déjà formatés, il ne peut pas s’agir d’un fichier CSV.
+
+foreach ($group in (Get-DynamicDistributionGroup)) {Get-Recipient -RecipientPreviewFilter $group.RecipientFilter -OrganizationalUnit $group.RecipientContainer | ft @{Expression={$_.displayname};Label=($group).name} | Out-File "c:\<path>.txt" -Append}
+
+***
 
 $membres = Get-DynamicDistributionGroup -Identity "LDD - FR - EXPL DOMITYS RSS - DIRECTEURS ADJOINTS" 
 Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter) | Format-Table -Property Name, location, CustomAttribute10, CountryOrRegion  | Out-File -FilePath  "C:\Rscripts\LDD_FR_RSS_DIRECTEURS_ADJOINTS2.txt"
@@ -175,10 +207,17 @@ Modifier un DDL
 # Forcer l'actualisation des membres de "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS"
 Set-DynamicDistributionGroup -Identity "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS" -ForceMembershipRefresh
 
+Set-DynamicDistributionGroup -Identity "LDD - FR - PARIS" -ForceMembershipRefresh
+
 # Permettre à "Denis BABONNEAU d'envoyer des mails à "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS"
 Set-DynamicDistributionGroup  -Identity "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS" -AcceptMessagesOnlyFrom @{add="Denis BABONNEAU"}
 
 Pour ajouter ou supprimer des expéditeurs sans affecter les autres entrées existantes, utilisez la syntaxe suivante : @{Add="Sender1","Sender2"...; Remove="Sender3","Sender4"...}
+
+$extAtrValue="Contoso"
+
+Set-DynamicDistributionGroup -Identity Developers -RecipientFilter "ExtensionCustomAttribute1 -eq '$extAtrValue'"
+
 
 *****************
 MAILBOX
@@ -208,4 +247,24 @@ Get-DynamicDistributionGroup -Identity "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS
 # Retention d'une boite mail
 
 ![image](https://github.com/user-attachments/assets/680e1353-4710-42f5-9ad4-d70bcaf17e4d)
+
+
+# Traduire le SID en nom d’utilisateur 
+
+
+$objSID = New-Object System.Security.Principal.SecurityIdentifier("bcb04422-7a9e-4a83-9005-13de8238515d")
+$objUser = $objSID.Translate([System.Security.Principal.NTAccount])
+$userName = $objUser.Value
+Write-Host "Nom d'utilisateur associé au SID : $userName"
+
+# Renommez le compte local sur un ordinateur distant à l’aide d’informations d’identification stockées.
+$userName = 'administrator@tech.local'
+$password = '123qwe..'
+[SecureString]$securepassword = $password | ConvertTo-SecureString -AsPlainText -Force 
+$credential = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $securepassword
+Invoke-Command -ComputerName 10.10.10.10 -ScriptBlock { Rename-LocalUser -Name "gohan" -NewName "trunks" } -credential $credential
+**
+
+$credential = New-Object System.Management.Automation.PSCredential -ArgumentList @('administrator@tech.local',(ConvertTo-SecureString -String '123qwe..' -AsPlainText -Force))
+Invoke-Command -ComputerName 10.10.10.10 -ScriptBlock { Rename-LocalUser -Name "gohan" -NewName "trunks" } -credential $credential
 
