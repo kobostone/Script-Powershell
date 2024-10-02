@@ -1,5 +1,37 @@
 # Script-Powershell
 
+
+# AD
+
+ Get-AdUser -Filter {name -Like "*Tony IBANES*"} -Properties *
+
+  Get-ADUser -Filter {name -Like "*jacob d*"} -Properties  Department, co
+  
+  
+  ![image](https://github.com/user-attachments/assets/b9869d3d-ff37-4b98-9b74-c17a4168b23e)
+
+
+# Boites partagées
+
+Tout d’abord, assurez-vous que la stratégie d’exécution signée à distance est définie sur true. Pour ce faire, exécutez PowerShell en mode administrateur et exécutez : Set-ExecutionPolicy RemoteSigned
+Ensuite, exécutez ce qui suit pour vous authentifier et importer des commandes PowerShell dans votre session locale :
+$LiveCred = Get-Credential
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange-ConnectionUri https://ps.outlook.com/powershell/ -Credential $LiveCred -Authentication Basic -AllowRedirection
+Import-PSSession $Session
+Accorder à un administrateur l’accès à une seule boîte aux lettres
+Add-MailboxPermission user@domain.com -User admin@domain.com -AccessRights FullAccess -InheritanceType All
+Accorder à un administrateur l’accès à toutes les boîtes aux lettres
+
+Remove-MailboxPermission user@example.com -User admin@example.com -AccessRights FullAccess -InheritanceType All
+Révoquer les autorisations ci-dessus
+Si vous souhaitez révoquer des autorisations après les avoir accordées, remplacez simplement 'Add-MailboxPermission' par 'Remove-MailboxPermission' suivi de la commande d’origine que vous avez saisie pour accorder les autorisations. Par exemple, pour accorder à admin@example.com un accès complet à user@example.com, vous devez entrer la commande :
+Add-MailboxPermission user@example.com -User admin@example.com -AccessRights FullAccess -InheritanceType All
+Pour empêcher admin@example.com d’afficher user@example.com, vous devez entrer la commande :
+Remove-MailboxPermission user@example.com -User admin@example.com -AccessRights FullAccess -InheritanceType All
+Mettre à jour: Il existe un commutateur que vous pouvez utiliser en conjonction avec les commandes ci-dessus qui masquera l’affichage de la boîte aux lettres de l’utilisateur dans le panneau de l’arborescence des boîtes aux lettres d’Outlook (sur le côté gauche).
+
+-AutoMapping $false
+ 
 ## Connect to Exchange
 Import-Module ExchangeOnlineManagement
 
@@ -182,6 +214,15 @@ Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter) |Sort-Object -P
 $membres = Get-DynamicDistributionGroup -Identity "LDD - FR - EXPL - DOMRG1-NOROU - MAINTENANCE" 
 Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter) |Sort-Object -Property displayname| Format-Table -Property displayname, title, CustomAttribute3, CustomAttribute8 | Out-File -FilePath "C:\Rscripts\LDD_FR_EXPL_DOMRG1_NOROU_MAINTENANCE.txt"
 
+
+
+# Equivalent GREP
+
+Get-Recipient -RecipientPreviewFilter (get-dynamicdistributiongroup "LDD - FR - PARIS").RecipientFilter -OrganizationalUnit $_.RecipientContainer | Out-String -Stream | Select-String -Pattern 'ce82a351-0df9-440a-bb84-9110938acef9' -AllMatches
+
+ Get-Recipient -RecipientPreviewFilter (get-dynamicdistributiongroup "LDD - FR - PARIS").RecipientFilter -OrganizationalUnit $_.RecipientContainer | Out-String -Stream | Select-String -Pattern '02c8b266-0e57-4b60-93fc-e989e0f9a54f' -AllMatches  | ft displayname, title
+
+02c8b266-0e57-4b60-93fc-e989e0f9a54f UserMailbox
 _________________________________________________________________________________
 ## CREATION  d'un FILTER
 
@@ -243,13 +284,28 @@ La commande suivante affiche toutes les restrictions de remise de messages confi
 
 Get-DynamicDistributionGroup -Identity "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS" | Format-List AcceptMessagesOnlyFrom,AcceptMessagesOnlyFromDLMembers
 
+Add-MailboxFolderPermission brett.jackson:\contacts -AccessRight Reviewer -User user1@theitbros.onmicrosoft.com
+
 
 # Retention d'une boite mail
 
 ![image](https://github.com/user-attachments/assets/680e1353-4710-42f5-9ad4-d70bcaf17e4d)
 
 
-# Traduire le SID en nom d’utilisateur 
+# Traduire le ID en nom d’utilisateur 
+
+(Get-AzureADUser -Filter "ObjectId eq '4dd124f2-8c6e-4fcd-b425-85b95332bd96'").DisplayName
+Jacob DIAKITE
+
+ $(Get-AzureADUser -Filter "ObjectId eq '4dd124f2-8c6e-4fcd-b425-85b95332bd96'").UserPrincipalName
+jacob.diakite-ext@aegide.fr
+
+$(Get-AzureADUser -Filter "ObjectId eq '4dd124f2-8c6e-4fcd-b425-85b95332bd96'").DisplayName
+Jacob DIAKITE
+
+
+ $(Get-AzureADUser -Filter "UserPrincipalName eq 'jacob.diakite-ext@aegide.fr'").ObjectId
+4dd124f2-8c6e-4fcd-b425-85b95332bd96
 
 
 $objSID = New-Object System.Security.Principal.SecurityIdentifier("bcb04422-7a9e-4a83-9005-13de8238515d")
