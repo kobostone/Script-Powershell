@@ -59,7 +59,6 @@ Catch {
 
 ## Extract members DDL
 
-****** SUR
 $membres = Get-DynamicDistributionGroup -Identity "LDD - FR - EXPL DOMITYS RSS - DIRECTEURS ADJOINTS" 
 Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter) | Format-Table -Property Name, location, CustomAttribute10, CountryOrRegion  | Out-File -FilePath  "C:\Rscripts\LDD_FR_RSS_DIRECTEURS_ADJOINTS2.txt"
 
@@ -72,7 +71,6 @@ Aurélie LANCON                       UserMailbox
 Cécile MONTAGNE                      UserMailbox
 Cédric FAYOLLE
 
-## Extract members DDL
 
 $membres = Get-DynamicDistributionGroup -Identity "LDD - FR - DIRECTION RH"
 Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter)   |Sort-Object -Property displayname| Format-Table -Property Name, StateOrProvince, CustomAttribute10, CountryOrRegion   | Out-File -FilePath  "C:\Rscripts\LDD_FR_DIRECTION_RH.txt"
