@@ -51,11 +51,19 @@ $allr | Format-Table -Property Name,PrimarySmtpAddress,Title,Department,city,off
 
 ## Création d'un filter:
 $Filter  = "((RecipientType -eq 'UserMailbox') -and ((CustomAttribute8 -eq 'DOMRG1-NOROU') -and ((CustomAttribute3 -eq 'MESP') -or (CustomAttribute3 -eq 'MAIN') -or (CustomAttribute3 -eq 'MAINA') -or (CustomAttribute3 -eq 'ESVE') -or (CustomAttribute3 -eq 'REMT') -or (CustomAttribute3 -eq 'CMEV') -or (CustomAttribute3 -eq 'TECM') )))"         
-Get-Recipient -RecipientPreviewFilter $Filter |Sort-Object -Property displayname | ft displayname, title, PrimarySmtpAddress, CustomAttribute3, CustomAttribute8 
+Get-Recipient -RecipientPreviewFilter $Filter |Sort-Object -Property displayname | ft displayname, title, office, PrimarySmtpAddress, CustomAttribute3, CustomAttribute8 
 
 
+$Filter  = "((RecipientType -eq 'UserMailbox') -and ((Office -eq 'Siège Tours - DOMITYS GESTION IMMOBILIERE') -or (Office -eq 'Siège  Tours - DOMITYS SAS') -or (Office -eq 'Siège Tours - AEGIDE SAS') -or (Office -eq 'Siège Tours - AEGIDE SA') -or (Office -eq 'Siège Tours - AEGIDE MANAGEMENT') -or (Office -eq 'DOMITYS SAS - DOMITYS CAMPUS')))"
+Get-Recipient -RecipientPreviewFilter $Filter |Sort-Object -Property displayname | ft displayname, title, office, PrimarySmtpAddress, CustomAttribute3, CustomAttribute8                                                   
 
-### Autoriser un utilisateur à envoyer des message à une LDD
+
+$Filter  = "((RecipientType -eq 'UserMailbox') -and ((Office -eq 'Siège  Tours - DOMITYS SAS') -or (Office -eq 'Siège Tours - AEGIDE SA')  -or (Office -eq 'DOMITYS SAS - DOMITYS CAMPUS')))"
+Get-Recipient -RecipientPreviewFilter $Filter |Sort-Object -Property displayname | ft displayname, title, office, PrimarySmtpAddress, CustomAttribute3, CustomAttribute8   
+
+
+$Filter  = "((RecipientType -eq 'UserMailbox') -and ((Office -eq 'Siège Tours - DOMITYS SAS')))"
+Get-Recipient -RecipientPreviewFilter $Filter |Sort-Object -Property displayname | ft displayname, title, office, PrimarySmtpAddress, CustomAttribute3, CustomAttribute8
 
 ce20aa6a-1f29-4987-804b-f1b31a24e8d3
 
