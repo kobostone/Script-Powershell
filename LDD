@@ -1,1 +1,24 @@
+### Connexion Exchange online
+
+Import-Module ExchangeOnlineManagement     
+Connect-ExchangeOnline -UserPrincipalName jacob.diakite-ext@gmail.com      
+
+### Extraction membres LDD
+
+Get-Recipient -RecipientPreviewFilter (get-dynamicdistributiongroup "LDD - FR - TOURS CAMPUS").RecipientFilter -OrganizationalUnit $_.RecipientContainer
+
+Name                                 RecipientType
+----                                 -------------
+Elodie GOULAO                        UserMailbox
+Marie GILBERT                        UserMailbox
+Véronique THEVENOT                   UserMailbox
+Laurence LECHOWICZ                   UserMailbox
+Emilie RECANZONE                     UserMailbox
+Elodie TABAREAU                      UserMailbox
+Pauline LE FRANC                     UserMailbox
+Clémence LAVIER                      UserMailbox
+Lou ADAM                             UserMailbox
+Sandrine CHAPELLE                    UserMailbox
+Delphine CASTAGNE                    UserMailbox
+ee8a0a13-3ee6-445f-afdc-9affb223cf35 UserMailbox
 
