@@ -22,3 +22,42 @@ Sandrine CHAPELLE                    UserMailbox
 Delphine CASTAGNE                    UserMailbox
 ee8a0a13-3ee6-445f-afdc-9affb223cf35 UserMailbox
 
+### Autoriser un utilisateur à envoyer des message à une LDD
+
+ce20aa6a-1f29-4987-804b-f1b31a24e8d3
+
+Set-DynamicDistributionGroup -Identity "LDD - FR - TOURS CAMPUS" -AcceptMessagesOnlyFrom @{add="Marie-Laure CHRISTIN"}
+
+
+### Création de LDD
+
+Set-DynamicDistributionGroup -Identity "INTERNAL" -RecipientFilter {(Office -eq 'XXX') -and (company -eq 'YYY')}
+
+Set-DynamicDistributionGroup -Identity "EXTERNAL" -RecipientFilter {(Office -eq 'XXX') -and (company -eq 'EXTERNAL - ')}
+
+
+
+
+
+ 
+
+
+ 
+
+
+
+Répondre 
+ Cette réponse vous a-t-elle été utile ?Oui Non
+ 
+Set-DynamicDistributionGroup -Identity "INTERNAL" -RecipientFilter {(Office -eq 'XXX') -and (company -eq 'YYY')}
+Pour la seconde, je ne trouve pas le bon tips pour faire que la commande fonctionne avec un équivalent de company -startwith *EXTERNAL*(en rouge le point de blocage) : 
+
+Set-DynamicDistributionGroup -Identity "EXTERNAL" -RecipientFilter {(Office -eq 'XXX') -and (company -eq 'EXTERNAL - ')}
+
+
+
+
+
+ 
+
+
