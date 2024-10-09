@@ -48,6 +48,13 @@ $allr = Get-Recipient -RecipientPreviewFilter $dl.RecipientFilter -Organizationa
 $allr | Format-Table -Property Name,PrimarySmtpAddress,Title,Department,city,office 
 
 
+
+## Création d'un filter:
+$Filter  = "((RecipientType -eq 'UserMailbox') -and ((CustomAttribute8 -eq 'DOMRG1-NOROU') -and ((CustomAttribute3 -eq 'MESP') -or (CustomAttribute3 -eq 'MAIN') -or (CustomAttribute3 -eq 'MAINA') -or (CustomAttribute3 -eq 'ESVE') -or (CustomAttribute3 -eq 'REMT') -or (CustomAttribute3 -eq 'CMEV') -or (CustomAttribute3 -eq 'TECM') )))"         
+Get-Recipient -RecipientPreviewFilter $Filter |Sort-Object -Property displayname | ft displayname, title, PrimarySmtpAddress, CustomAttribute3, CustomAttribute8 
+
+
+
 ### Autoriser un utilisateur à envoyer des message à une LDD
 
 ce20aa6a-1f29-4987-804b-f1b31a24e8d3
