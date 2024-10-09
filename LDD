@@ -22,6 +22,13 @@ Sandrine CHAPELLE                    UserMailbox
 Delphine CASTAGNE                    UserMailbox
 ee8a0a13-3ee6-445f-afdc-9affb223cf35 UserMailbox
 
+### Cas 2:Verifié
+
+$dl = Get-DynamicDistributionGroup -Identity "LDD - FR - TOURS CAMPUS"
+$allr = Get-Recipient -RecipientPreviewFilter $dl.RecipientFilter -OrganizationalUnit $dl.RecipientContainer
+$allr | Select-Object Name,PrimarySmtpAddress,Title,Department,city,office | Export-Csv -Path “c:\Rscripts\GlobalMembers.csv” –NoTypeInformation
+
+
 ### Autoriser un utilisateur à envoyer des message à une LDD
 
 ce20aa6a-1f29-4987-804b-f1b31a24e8d3
