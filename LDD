@@ -37,23 +37,12 @@ Set-DynamicDistributionGroup -Identity "EXTERNAL" -RecipientFilter {(Office -eq 
 
 
 
+Pour créer une liste de distribution dynamique sur Exchange Online qui inclut les collaborateurs externes dont le nom de société débute par "EXTERNAL - ", 
 
-
- 
-
-
- 
-
-
-
-Répondre 
- Cette réponse vous a-t-elle été utile ?Oui Non
- 
-Set-DynamicDistributionGroup -Identity "INTERNAL" -RecipientFilter {(Office -eq 'XXX') -and (company -eq 'YYY')}
-Pour la seconde, je ne trouve pas le bon tips pour faire que la commande fonctionne avec un équivalent de company -startwith *EXTERNAL*(en rouge le point de blocage) : 
-
-Set-DynamicDistributionGroup -Identity "EXTERNAL" -RecipientFilter {(Office -eq 'XXX') -and (company -eq 'EXTERNAL - ')}
-
+New-DynamicDistributionGroup -Name "External Collaborators" -RecipientFilter {Company -like "EXTERNAL - *"}
+Explication des paramètres :
+-Name : Spécifie le nom de la liste de distribution dynamique.
+-RecipientFilter : Définit le filtre pour inclure uniquement les destinataires dont le nom de société commence par "EXTERNAL - ".
 
 
 
