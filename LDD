@@ -23,7 +23,7 @@ Delphine CASTAGNE                    UserMailbox
 ee8a0a13-3ee6-445f-afdc-9affb223cf35 UserMailbox
 
 
-Get-Recipient -RecipientPreviewFilter (get-dynamicdistributiongroup "LDD - FR - TOURS `(SIÈGE `- CAMPUS`)").RecipientFilter -OrganizationalUnit $_.RecipientContainer
+Get-Recipient -RecipientPreviewFilter (get-dynamicdistributiongroup "LDD - FR - TOURS (SIÈGE - CAMPUS)").RecipientFilter -OrganizationalUnit $_.RecipientContainer
 
 LDD - FR - TOURS (SIÈGE - CAMPUS)
 
@@ -50,11 +50,54 @@ $allr | Format-Table -Property Name,PrimarySmtpAddress,Title,Department,city,off
 
 
 ## Création d'un filter:
+
+Filtre verifie:OK
+$Filter  = "((RecipientType -eq 'UserMailbox') -and ((Office -eq 'Siège Tours - DOMITYS SAS')))"
+Get-Recipient -RecipientPreviewFilter $Filter |Sort-Object -Property displayname | ft displayname, title, office, PrimarySmtpAddress, CustomAttribute3, CustomAttribute8
+**
+Verifie: OK
 $Filter  = "((RecipientType -eq 'UserMailbox') -and ((CustomAttribute8 -eq 'DOMRG1-NOROU') -and ((CustomAttribute3 -eq 'MESP') -or (CustomAttribute3 -eq 'MAIN') -or (CustomAttribute3 -eq 'MAINA') -or (CustomAttribute3 -eq 'ESVE') -or (CustomAttribute3 -eq 'REMT') -or (CustomAttribute3 -eq 'CMEV') -or (CustomAttribute3 -eq 'TECM') )))"         
 Get-Recipient -RecipientPreviewFilter $Filter |Sort-Object -Property displayname | ft displayname, title, office, PrimarySmtpAddress, CustomAttribute3, CustomAttribute8 
 
+***
+Verifie: OK
+$Filter = "((RecipientType -eq 'UserMailbox') -and ((Office -like 'Siège Tours*') -or (Office -eq  'DOMITYS SAS - DOMITYS CAMPUS')))" 
+Get-Recipient -RecipientPreviewFilter $Filter | ft displayname, title, Office, CustomAttribute2, CustomAttribute3
+****
+Verifie: OK
+$Filter = "((RecipientType -eq 'UserMailbox') -and (CustomAttribute3 -notlike 'PRES*')  -and (CustomAttribute2  -notlike 'Prestation*')-and (CustomAttribute3 -ne ''))"
+Get-Recipient -RecipientPreviewFilter $Filter | ft displayname, title, Office, CustomAttribute2, CustomAttribute3
 
-$Filter  = "((RecipientType -eq 'UserMailbox') -and ((Office -eq 'Siège Tours - DOMITYS GESTION IMMOBILIERE') -or (Office -eq 'Siège  Tours - DOMITYS SAS') -or (Office -eq 'Siège Tours - AEGIDE SAS') -or (Office -eq 'Siège Tours - AEGIDE SA') -or (Office -eq 'Siège Tours - AEGIDE MANAGEMENT') -or (Office -eq 'DOMITYS SAS - DOMITYS CAMPUS')))"
+
+**
+Verifie: OK
+$Filter = "((RecipientType -eq 'UserMailbox') -and ((Office -like 'Siège Tours*') -or (Office -eq  'DOMITYS SAS - DOMITYS CAMPUS')) -and (CustomAttribute3 -notlike 'PRES*')  -and (CustomAttribute2  -notlike 'Prestation*')-and (CustomAttribute3 -ne ''))"
+Get-Recipient -RecipientPreviewFilter $Filter | ft displayname, title, Office, CustomAttribute2, CustomAttribute3
+
+
+
+New-DynamicDistributionGroup  -Name  "LDD - LANGUE FR-BE - RESPONSABLES SERVICES"  -RecipientFilter {(RecipientTypeDetails -eq 'UserMailbox') -and (((StateOrProvince  -like 'RSS') -or (StateOrProvince  -like 'Region') -or (StateOrProvince  -like 'Hôtel')) -and ((CustomAttribute10 -like 'Responsable*')  -or (CustomAttribute10 -eq 'SPA Manager')) -and ((LanguagesRaw -like 'fr-FR') -or (LanguagesRaw -like 'fr-Be')))}
+
+-
+
+
+$Filter = "((RecipientType -eq 'UserMailbox') -and ((Office -like 'Siège Tours*') -or (Office -eq  'DOMITYS SAS - DOMITYS CAMPUS')) -and ((Office -like 'Siège Tours*') -or (Office -eq  'DOMITYS SAS - DOMITYS CAMPUS')))" 
+Get-Recipient -RecipientPreviewFilter $Filter | ft displayname, title, Office, CustomAttribute2, CustomAttribute3
+
+
+
+$Filter = "((RecipientType -eq 'UserMailbox') -and ((CustomAttribute3 -notlike 'PRES*')  -and (CustomAttribute2  -notlike 'Prestation*') -and (CustomAttribute3 -ne '')))"
+Get-Recipient -RecipientPreviewFilter $Filter | ft displayname, title, Office, CustomAttribute2, CustomAttribute3
+
+
+$Filter = {(RecipientType -eq 'UserMailbox') -and ((Office -like 'Siège Tours*') -or (Office -eq  'DOMITYS SAS - DOMITYS CAMPUS')) -and ((CustomAttribute3 -notlike 'PRES*')  -and (CustomAttribute2  -notlike 'Prestation*') -and (CustomAttribute3 -ne ''))}
+Get-Recipient -RecipientPreviewFilter $Filter | ft displayname, title, Office, CustomAttribute2, CustomAttribute3
+
+
+
+
+
+$Filter  = "((RecipientType -eq 'UserMailbox') -and ((Office -eq 'Siège Tours - DOMITYS GESTION IMMOBILIERE') -or (Office -eq 'Siège Tours - DOMITYS SAS') -or (Office -eq 'Siège Tours - AEGIDE SAS') -or (Office -eq 'Siège Tours - AEGIDE SA') -or (Office -eq 'Siège Tours - AEGIDE MANAGEMENT') -or (Office -eq 'DOMITYS SAS - DOMITYS CAMPUS')))"
 Get-Recipient -RecipientPreviewFilter $Filter |Sort-Object -Property displayname | ft displayname, title, office, PrimarySmtpAddress, CustomAttribute3, CustomAttribute8                                                   
 
 
