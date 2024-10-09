@@ -28,6 +28,10 @@ $dl = Get-DynamicDistributionGroup -Identity "LDD - FR - TOURS CAMPUS"
 $allr = Get-Recipient -RecipientPreviewFilter $dl.RecipientFilter -OrganizationalUnit $dl.RecipientContainer
 $allr | Select-Object Name,PrimarySmtpAddress,Title,Department,city,office | Export-Csv -Path “c:\Rscripts\GlobalMembers.csv” –NoTypeInformation
 
+### Cas 3 : vérifié
+$dl = Get-DynamicDistributionGroup -Identity "LDD - FR - TOURS CAMPUS"
+$allr = Get-Recipient -RecipientPreviewFilter $dl.RecipientFilter -OrganizationalUnit $dl.RecipientContainer
+$allr | Format-Table -Property Name,PrimarySmtpAddress,Title,Department,city,office 
 
 ### Autoriser un utilisateur à envoyer des message à une LDD
 
