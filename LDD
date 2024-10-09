@@ -22,6 +22,12 @@ Sandrine CHAPELLE                    UserMailbox
 Delphine CASTAGNE                    UserMailbox
 ee8a0a13-3ee6-445f-afdc-9affb223cf35 UserMailbox
 
+
+Get-Recipient -RecipientPreviewFilter (get-dynamicdistributiongroup "LDD - FR - TOURS `(SIÈGE `- CAMPUS`)").RecipientFilter -OrganizationalUnit $_.RecipientContainer
+
+LDD - FR - TOURS (SIÈGE - CAMPUS)
+
+
 ### Cas 2:Verifié
 
 $dl = Get-DynamicDistributionGroup -Identity "LDD - FR - TOURS CAMPUS"
@@ -33,8 +39,11 @@ $dl = Get-DynamicDistributionGroup -Identity "LDD - FR - TOURS CAMPUS"
 $allr = Get-Recipient -RecipientPreviewFilter $dl.RecipientFilter -OrganizationalUnit $dl.RecipientContainer
 $allr | Format-Table -Property Name,PrimarySmtpAddress,Title,Department,city,office 
 
+
+$allr = Get-Recipient -RecipientPreviewFilter $dl.LDD - FR - TOURS (SIÈGE - CAMPUS)
+
 ### cas 4:
-$dl = Get-DynamicDistributionGroup -Identity "LDD - FR - TOURS (SIÈGE - CAMPUS)"
+$dl = Get-DynamicDistributionGroup -Identity "LDD - FR - TOURS `(SIÈGE `- CAMPUS`)"
 $allr = Get-Recipient -RecipientPreviewFilter $dl.RecipientFilter -OrganizationalUnit $dl.RecipientContainer
 $allr | Format-Table -Property Name,PrimarySmtpAddress,Title,Department,city,office 
 
