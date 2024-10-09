@@ -1,0 +1,3 @@
+Import-Module ExchangeOnlineManagement    
+
+Connect-ExchangeOnline -UserPrincipalName jacob.diakite-ext@aegide.fr
