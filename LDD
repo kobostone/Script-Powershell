@@ -1,7 +1,27 @@
 ### Connexion Exchange online
+    
 
-Import-Module ExchangeOnlineManagement     
-Connect-ExchangeOnline -UserPrincipalName jacob.diakite-ext@gmail.com      
+# Installer le module Exchange Online Management \\ si ce n'est pas déjà fait
+Install-Module -Name ExchangeOnlineManagement -Force -AllowClobber
+
+# Importer le module Exchange Online Management
+Import-Module ExchangeOnlineManagement
+
+# Se connecter à Exchange Online
+$adminUser = "jacob.diakite-ext@aegide.fr"
+Connect-ExchangeOnline -UserPrincipalName $adminUser -ShowProgress $true
+ou
+Connect-ExchangeOnline -UserPrincipalName jacob.diakite-ext@aegide.fr  
+
+# Créer la première liste de distribution dynamique pour les utilisateurs francophones en Belgique
+New-DynamicDistributionGroup -Name "Belgique-Francophones" -RecipientFilter {(PreferredLanguage -eq 'fr-BE') -and (CountryOrRegion -eq 'Belgique')}
+
+# Créer la deuxième liste de distribution dynamique pour les utilisateurs néerlandophones en Belgique
+New-DynamicDistributionGroup -Name "Belgique-Neerlandophones" -RecipientFilter {(PreferredLanguage -eq 'nl-BE') -and (CountryOrRegion -eq 'Belgique')}
+
+# Se déconnecter d'Exchange Online
+Disconnect-ExchangeOnline -Confirm:$false
+
 
 ### Extraction membres LDD
 
