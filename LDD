@@ -22,8 +22,31 @@ New-DynamicDistributionGroup -Name "Belgique-Neerlandophones" -RecipientFilter {
 # Se déconnecter d'Exchange Online
 Disconnect-ExchangeOnline -Confirm:$false
 
+****
+
+
+### Attributs courants
+City=ville; 
+company=entreprise; 
+poste= title
+co=pays ou région CountryOrRegion
+displaynam= nom prenom
+
 
 ### Extraction membres LDD
+Verifié:
+$membres = Get-DynamicDistributionGroup -Identity "LDD - FR - DIRECTION RH" 
+ Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter)   |Sort-Object -Property displayname| Format-Table -Property Name, StateOrProvince, CustomAttribute10, CountryOrRegion   | Out-File -FilePath  "C:\Temp\LDD - FR - DIRECTION RH.txt" 
+
+$membres = Get-DynamicDistributionGroup -Identity "LDD - FR - TOURS CAMPUS" 
+Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter) | Sort-Object -Property displayname| Format-Table -Property Name, RecipientContainer, CustomAttribute10, CountryOrRegion   | Out-File -FilePath  "C:\Temp\LDD - FR - DIRECTION RH.txt" 
+
+$membres = Get-DynamicDistributionGroup -Identity "LDD - FR - TOURS (SIÈGE - CAMPUS)" 
+Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter) | Sort-Object -Property displayname| Format-Table -Property Name, RecipientContainer, CustomAttribute10, CountryOrRegion   | Out-File -FilePath  "C:\Rscripts\00LDD - FR - DIRECTION RH.txt" 
+
+
+LDD - FR - TOURS (SIÈGE - CAMPUS)
+
 
 Get-Recipient -RecipientPreviewFilter (get-dynamicdistributiongroup "LDD - FR - TOURS CAMPUS").RecipientFilter -OrganizationalUnit $_.RecipientContainer
 
@@ -68,8 +91,11 @@ $allr = Get-Recipient -RecipientPreviewFilter $dl.RecipientFilter -Organizationa
 $allr | Format-Table -Property Name,PrimarySmtpAddress,Title,Department,city,office 
 
 
-
 ## Création d'un filter:
+
+$Filter  ={(RecipientTypeDetails -eq 'UserMailbox') -and (   ((StateOrProvince  -like 'RSS') -or (StateOrProvince  -like 'Region') -or (StateOrProvince  -like 'Hôtel')) -and ((CustomAttribute10 -like 'Responsable*' )  -or (CustomAttribute10 -eq  'SPA Manager'))  -and  (co  -like 'Belgique *'))}
+Get-Recipient -RecipientPreviewFilter $Filter | ft displayname, title, StateOrProvince,CountryOrRegion
+
 
 Filtre verifie:OK
 $Filter  = "((RecipientType -eq 'UserMailbox') -and ((Office -eq 'Siège Tours - DOMITYS SAS')))"
@@ -134,6 +160,10 @@ Set-DynamicDistributionGroup -Identity "LDD - FR - TOURS CAMPUS" -AcceptMessages
 
 
 ### Création de LDD
+Connect-ExchangeOnline  
+New-DynamicDistributionGroup -Name "LDD - FR - EXPL - RESPONSABLES SERVICES"  -RecipientFilter "((RecipientTypeDetails -eq 'UserMailbox') -and (((StateOrProvince  -like 'RSS') -or (StateOrProvince  -like 'Region') -or (StateOrProvince  -like 'Hôtel')) -and ((CustomAttribute10 -like 'Responsable*' )  -or (CustomAttribute10 -eq  'SPA Manager')) -and (co -like 'France')))"
+
+
 
 Set-DynamicDistributionGroup -Identity "INTERNAL" -RecipientFilter {(Office -eq 'XXX') -and (company -eq 'YYY')}
 
