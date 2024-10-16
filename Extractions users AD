@@ -1,1 +1,37 @@
 
+
+# Récupérer tous les utilisateurs de l'Active Directory
+(sur aegidecontrol1 ou control2)
+
+ 
+# Créer une liste pour stocker les résultats
+$UserList = @()
+ 
+# Parcourir chaque utilisateur et collecter les informations
+foreach ($user in $users) {
+    $UserInfo = New-Object PSObject -Property @{
+        "Identifiant"            = $user.SamAccountName
+        "Nom d'utilisateur"      = $user.Name
+        "Date de création"       = $user.whenCreated
+        "Dernière mise à jour"   = $user.whenChanged
+        "Statut"                 = if ($user.Enabled) { "Actif" } else { "Non actif" }
+        "Date de désactivation"  = if ($user.AccountExpirationDate) { $user.AccountExpirationDate } else { "N/A" }
+        "Dernière connexion"     = if ($user.LastLogonDate) { $user.LastLogonDate } else { "Jamais connecté" }
+    }
+    # Ajouter les informations à la liste
+    $UserList += $UserInfo
+}
+ 
+# Exporter les résultats dans un fichier CSV
+$UserList | Export-Csv -Path "C:\temp\ListeUtilisateursAD.csv" -NoTypeInformation
+
+
+
+
+****
+
+Get-ADUser -Filter * -Property SamAccountName, Name, whenCreated, whenChanged, lastLogonDate, Enabled | Select-Object @{Name="Identifiant"; Expression = {$_.SamAccountName}},@{Name="Nom"; Expression = {$_.Name}},@{Name="Date de Création"; Expression = {$_.whenCreated}},@{Name="Date de Dernière Modification"; Expression = {$_.whenChanged}},@{Name="Dernière Connexion"; Expression = {$_.lastLogonDate}}, @{Name="Statut du Compte"; Expression = { if ($_.Enabled) { "Actif" } else { "Désactivé" }}} |Export-Csv -Path "C:\temp\utilisateurs_ADperso.csv" -NoTypeInformation -Encoding UTF8
+           
+
+
+Get-ADUser -Filter "SamAccountName -eq 'Administrateur'" -Server SRV-ADDS-01.it-connect.local
