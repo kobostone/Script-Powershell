@@ -1,3 +1,153 @@
+## List all members of distribution group (DL) or security group recursively.
+option 1:
+
+<#
+The script accepts the name or email of an Exchange distribution list (GroupIdentity) 
+as a parameter and recursively retrieves all members, including those in any nested 
+distribution lists.
+ 
+Script: Gather-DLMembers.ps1
+Parameter: GroupIdenity (DL's name or email address)
+Returns: Members list objects
+Written by: Anand, the Awesome
+#>
+param ($GroupIdentity)
+ 
+function Get-GroupMembersRecursive {
+    param (
+        [string]$GroupName
+    )
+    $members = Get-DistributionGroupMember -Identity $GroupName | `
+                Where-Object { $PSItem.RecipientType -ne 'User'}
+    foreach ($member in $members) {
+        if ($member.RecipientType -eq 'MailContact' `
+            -or $member.RecipientType -eq 'UserMailbox') 
+        {
+            $MemberList.Add($member) | Out-Null
+        } 
+        else
+        {
+            Get-GroupMembersRecursive -GroupName $member.Name
+        }
+    }
+}
+ 
+<#
+* * * Script Starts Here * * * 
+#>
+ 
+# Initialize an ArrayList to store member objects
+$MemberList = [System.Collections.ArrayList]::new()
+Get-GroupMembersRecursive -GroupName $GroupIdentity
+return $MemberList
+ 
+# * * * End of the Script * * * 
+Here is some examples:
+
+This displays all members from the DL recursively:
+
+c:\> Gather-DLMembers -GroupIdentity DL-Name
+
+This will export the member list information (Name,Email) to a CSV file.
+
+c:\> Gather-DLMembers -GroupIdentity DL-Name | Select DisplayName,PrimarySMTPAddress | Export-CSV -Path .\DL-Name-Members.csv
+
+This will store the member list in a variable:
+
+c:\> $Members = Gather-DLMembers -GroupIdentity DL-Name
+
+Share this:
+
+==========================================================
+Option 2:
+<#
+    List-DLMembers.ps1
+    
+    This script lists all members of a distribution list including all 
+    child groups members recursively. It create a CSV file with all
+    groups of the given distribution group.
+
+    Parameter: Distribution group Alias or Name or Email Address
+
+    Example:
+    .\List-DLMembers.ps1 -DLName "NA-Sales"
+#>
+param($DLname)
+
+
+<#
+
+Function    : Expand-Group
+Parameter   : Distribution Group Name
+Description : This function populates all the members of the
+given distribution group to a global variable named $Global:Users 
+
+#>
+Function Expand-Group ($GroupName)
+{
+    $members = Get-DistributionGroupMember -Identity $GroupName
+
+    foreach($member in $members)
+    {
+        $RecipientType = (Get-Recipient $member.Alias).RecipientType
+        
+        $member.Name + "`t`t`t" + $RecipientType
+        if ($RecipientType -like "*DistributionGroup*")
+        {
+            # Found an child group - calling myself to expand the group
+            Expand-Group -GroupName $member.Alias
+        }
+
+        # Create a PSCustomObject of the current member
+        $MemberObject = [PSCustomObject] @{
+            Name = "$($member.Name)" 
+            Title = "$($member.Title)" 
+            Department = "$($member.Department)" 
+            Email = "$($member.PrimarySMTPAddress)" 
+            Memberof = "$GroupName"
+        }
+
+        # Store the member object to Users array
+        $global:users += $MemberObject
+    }
+}
+<#
+    End of the Function
+#>
+
+
+
+
+<#
+ °º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸ °º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸
+
+                THE SCRIPT STARTS HERE
+
+ °º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸ °º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸
+#>
+
+
+# Create a Global Array Variable to store all DL member objects
+$global:users = @()
+
+# Call the Expand-Group function to populate the all DL members
+Expand-Group -GroupName $DLname
+
+#Store the member objects to a CSV file
+$filename = ".\$DLName-Members.csv"
+$global:users | ConvertTo-Csv | Out-File -FilePath $filename
+
+<#
+ °º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸ °º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸
+
+                END OF THE SCRIPT
+
+ °º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸ °º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸
+
+#>
+
+
+
 # S’approprier tous les groupes de distribution – Office 365
 
 Get-DistributionGroup |Set-DistributionGroup -ManagedBy “name@domain.org” –BypassSecurityGroupManagerCheck
