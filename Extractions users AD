@@ -26,7 +26,19 @@ foreach ($user in $users) {
 $UserList | Export-Csv -Path "C:\temp\ListeUtilisateursAD.csv" -NoTypeInformation
 
 
+Here is some examples:
 
+This displays all members from the DL recursively:
+
+c:\> Gather-DLMembers -GroupIdentity DL-Name
+
+This will export the member list information (Name,Email) to a CSV file.
+
+c:\> Gather-DLMembers -GroupIdentity DL-Name | Select DisplayName,PrimarySMTPAddress | Export-CSV -Path .\DL-Name-Members.csv
+
+This will store the member list in a variable:
+
+c:\> $Members = Gather-DLMembers -GroupIdentity DL-Name
 
 ****
 
