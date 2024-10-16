@@ -1,3 +1,13 @@
 # S’approprier tous les groupes de distribution – Office 365
 
 Get-DistributionGroup |Set-DistributionGroup -ManagedBy “name@domain.org” –BypassSecurityGroupManagerCheck
+
+
+
+# Importer le module Active Directory
+Import-Module ActiveDirectory
+
+# Supprimer un utilisateur de la liste de distribution
+Remove-ADGroupMember -Identity "NomDeLaListeDeDistribution" -Members "NomUtilisateur1", "NomUtilisateur2" -Confirm:$false
+
+Write-Host "Les utilisateurs ont été supprimés avec succès."
