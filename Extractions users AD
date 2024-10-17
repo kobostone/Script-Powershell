@@ -15,7 +15,7 @@ Select-Object @{Name="Identifiant"; Expression = {$_.SamAccountName}},
               @{Name="Date de Dernière Modification"; Expression = {$_.whenChanged}},
               @{Name="Dernière Connexion"; Expression = { if ($_.lastLogonDate) {$_.lastLogonDate } else { "Jamais connecté" }}},
               @{Name="Statut du Compte"; Expression = { if ($_.Enabled) { "Actif" } else { "Désactivé" }}},
-              @{Name="Date de Désactivation"; Expression = { if ($_.AccountExpirationDate) { $_.AccountExpirationDate } else { "N/A" }}}|
+              @{Name="Date de Désactivation"; Expression = { if ($_.AccountExpirationDate) { $_.AccountExpirationDate } else { "N/A" }}} |
 Export-Csv -Path "C:\temp\utilisateurs_AD_test2.csv" -NoTypeInformation -Encoding UTF8
 
 Write-Host "Extraction des informations AD terminée."
@@ -43,6 +43,23 @@ foreach ($user in $users) {
 # Exporter les résultats dans un fichier CSV
 $UserList | Export-Csv -Path "C:\temp\ListeUtilisateursAD.csv" -NoTypeInformation
 
+### Script 3
+Recuperer les user actifs
+
+# Importer le module Active Directory (nécessaire si vous travaillez avec AD)
+Import-Module ActiveDirectory
+
+Get-ADUser -Filter {Enabled -eq $true} -Property SamAccountName, Name, whenCreated, whenChanged, lastLogonDate, Enabled, AccountExpirationDate | 
+Select-Object @{Name="Identifiant"; Expression = {$_.SamAccountName}},
+              @{Name="Nom"; Expression = {$_.Name}},
+              @{Name="Date de Création"; Expression = {$_.whenCreated}},
+              @{Name="Date de Dernière Modification"; Expression = {$_.whenChanged}},
+              @{Name="Dernière Connexion"; Expression = { if ($_.lastLogonDate) {$_.lastLogonDate } else { "Jamais connecté" }}},
+              @{Name="Statut du Compte"; Expression = { if ($_.Enabled) { "Actif" } else { "Désactivé" }}},
+              @{Name="Date de Désactivation"; Expression = { if ($_.AccountExpirationDate) { $_.AccountExpirationDate } else { "N/A" }}} |
+Export-Csv -Path "C:\temp\utilisateurs_AD_actifs.csv" -NoTypeInformation -Encoding UTF8
+
+Write-Host "Extraction des utilisateurs actifs terminée."
 
 Here is some examples:
 
