@@ -161,3 +161,29 @@ Import-Module ActiveDirectory
 Remove-ADGroupMember -Identity "NomDeLaListeDeDistribution" -Members "NomUtilisateur1", "NomUtilisateur2" -Confirm:$false
 
 Write-Host "Les utilisateurs ont été supprimés avec succès."
+
+## Ajouter plusieurs users a une LD
+
+# Lire les utilisateurs depuis un fichier CSV
+$users = Import-Csv "C:\Temp\utilisateurs_to_add.csv"
+
+# Ajouter chaque utilisateur à la liste de distribution
+foreach ($user in $users) {
+    Add-ADGroupMember -Identity "NomDeLaListeDeDistribution" -Members $user.SamAccountName
+}
+
+Write-Host "Les utilisateurs du fichier CSV ont été ajoutés avec succès."    
+
+NB: le fichier CSV doit contenir une colonne avec les SamAccountName des utilisateurs à ajouter ou supprimer.
+
+## Enlever plusieurs users a une LD
+
+# Lire les utilisateurs depuis un fichier CSV    
+$users = Import-Csv "C:\Temp\utilisateurs_to_remove.csv"
+
+# Supprimer chaque utilisateur de la liste de distribution
+foreach ($user in $users) {
+    Remove-ADGroupMember -Identity "NomDeLaListeDeDistribution" -Members $user.SamAccountName -Confirm:$false
+}
+
+Write-Host "Les utilisateurs du fichier CSV ont été supprimés avec succès."
