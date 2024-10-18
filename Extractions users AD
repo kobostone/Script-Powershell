@@ -84,6 +84,14 @@ Export-Csv -Path "C:\temp\utilisateurs_AD_actifs.csv" -NoTypeInformation -Encodi
 
 Write-Host "Extraction des utilisateurs actifs terminée."
 
+
+Explications :
+Get-ADUser : Cette cmdlet est utilisée pour récupérer les informations des utilisateurs dans AD.
+-Filter * : Permet de récupérer tous les utilisateurs. Vous pouvez remplacer cette condition par un filtre spécifique (par exemple, les utilisateurs d’une unité d’organisation (OU) spécifique).
+-Property : Permet de spécifier les propriétés supplémentaires comme whenCreated, lastLogonDate, etc.
+Select-Object : Sélectionne les propriétés que vous souhaitez afficher dans le fichier de sortie.
+Export-Csv : Exporte les données dans un fichier CSV.
+
 Here is some examples:
 
 This displays all members from the DL recursively:
