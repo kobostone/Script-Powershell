@@ -255,9 +255,7 @@ Set-DynamicDistributionGroup  -Identity "LDD - EU - EXPL DOMITYS RSS - DIRECTEUR
 
 Pour ajouter ou supprimer des expéditeurs sans affecter les autres entrées existantes, utilisez la syntaxe suivante : @{Add="Sender1","Sender2"...; Remove="Sender3","Sender4"...}
 
-$extAtrValue="Contoso"
-
-Set-DynamicDistributionGroup -Identity Developers -RecipientFilter "ExtensionCustomAttribute1 -eq '$extAtrValue'"
+Set-DynamicDistributionGroup -Identity "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS" -AcceptMessagesOnlyFromDLMembers  @{add="digital@domitys.fr"}
 
 
 *****************
