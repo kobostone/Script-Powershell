@@ -1,5 +1,33 @@
 ### Pour lister toutes les boîtes aux lettres partagées où un utilisateur a des permissions :
 
+Get-Mailbox -RecipientTypeDetails SharedMailbox -ResultSize Unlimited | Get-MailboxPermission | Where-Object { $_.User -like "laura.poulain@domitys.fr" } | Select-Object Identity, User, AccessRights
+
+
+PS C:\> Get-Mailbox -RecipientTypeDetails SharedMailbox -ResultSize Unlimited | Get-MailboxPermission | Where-Object { $_.User -like "laura.poulain@domitys.fr" } | Select-Object Identity, User, AccessRights
+
+Identity           User                     AccessRights
+--------           ----                     ------------
+Assistance NOTILUS laura.poulain@domitys.fr {FullAccess}
+Base Fournisseur   laura.poulain@domitys.fr {FullAccess}
+Factures.Aegide... laura.poulain@domitys.fr {FullAccess}
+Retours Fournis... laura.poulain@domitys.fr {FullAccess}
+
+
+
+
+PS C:\> Get-Mailbox -RecipientTypeDetails SharedMailbox | ForEach-Object {
+>>     $Mailbox = $_
+>>     $Permissions = Get-MailboxPermission -Identity $Mailbox.Identity | Where-Object { $_.User -eq "paula.stefan@domitys.fr" }
+>>     if ($Permissions) {
+>>         $Mailbox.Identity     }
+>>  }
+bpack
+Assistance NOTILUS
+Factures-italie
+Factures-maurice
+Base Fournisseur
+Factures.Aegide-Domitys
+Retours Fournisseurs
 
  Get-Mailbox -RecipientTypeDetails SharedMailbox | ForEach-Object {
 >>     $Mailbox = $_
