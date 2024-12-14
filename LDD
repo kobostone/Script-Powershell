@@ -1,7 +1,8 @@
 ### Connexion Exchange online
-    
 
-# Installer le module Exchange Online Management \\ si ce n'est pas déjà fait
+
+# Installer le module Exchange Online Management
+
 Install-Module -Name ExchangeOnlineManagement -Force -AllowClobber
 
 # Importer le module Exchange Online Management
