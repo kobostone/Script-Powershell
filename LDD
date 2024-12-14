@@ -155,11 +155,77 @@ Set-DynamicDistributionGroup -Identity "LDD - FR - TOURS CAMPUS" -AcceptMessages
 
 
 ### Création de LDD
-Connect-ExchangeOnline  
+ 
 New-DynamicDistributionGroup -Name "LDD - FR - EXPL - RESPONSABLES SERVICES"  -RecipientFilter "((RecipientTypeDetails -eq 'UserMailbox') -and (((StateOrProvince  -like 'RSS') -or (StateOrProvince  -like 'Region') -or (StateOrProvince  -like 'Hôtel')) -and ((CustomAttribute10 -like 'Responsable*' )  -or (CustomAttribute10 -eq  'SPA Manager')) -and (co -like 'France')))"
 
 New-DynamicDistributionGroup  -Name  "LDD - LANGUE FR-BE - RESPONSABLES SERVICES"  -RecipientFilter {(RecipientTypeDetails -eq 'UserMailbox') -and (((StateOrProvince  -like 'RSS') -or (StateOrProvince  -like 'Region') -or (StateOrProvince  -like 'Hôtel')) -and ((CustomAttribute10 -like 'Responsable*')  -or (CustomAttribute10 -eq 'SPA Manager')) -and ((LanguagesRaw -like 'fr-FR') -or (LanguagesRaw -like 'fr-Be')))}
 
+New-DynamicDistributionGroup -Name "LDD - FR - EXPL - DOMRG1-NOROU - MAINTENANCE" -RecipientFilter {(RecipientTypeDetails -eq 'UserMailbox') -and ((CustomAttribute8 -eq 'DOMRG1-NOROU') -and ((CustomAttribute3 -eq 'MESP') -or (CustomAttribute3 -eq 'MAIN') -or (CustomAttribute3 -eq 'MAINA') -or (CustomAttribute3 -eq 'ESVE') -or (CustomAttribute3 -eq 'REMT') -or (CustomAttribute3 -eq 'CMEV') -or (CustomAttribute3 -eq 'TECM')))}
+
+ou
+New-DynamicDistributionGroup -Name "LDD - FR - EXPL - DOMRG6-EST - MAINTENANCE" -RecipientFilter {(RecipientTypeDetails -eq 'UserMailbox') -and ((CustomAttribute8 -eq 'DOMRG6-EST') -and ((CustomAttribute3 -eq 'MESP') -or (CustomAttribute3 -eq 'MAIN') -or (CustomAttribute3 -eq 'MAINA') -or (CustomAttribute3 -eq 'ESVE') -or (CustomAttribute3 -eq 'REMT') -or (CustomAttribute3 -eq 'CMEV') -or (CustomAttribute3 -eq 'TECM')))}
+
+
+---------------------------------
+
+### Modifier une LDD
+
+# Forcer l'actualisation des membres de "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS"
+Set-DynamicDistributionGroup -Identity "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS" -ForceMembershipRefresh
+
+
+# Modifier le recipientfilter de "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS"
+Set-DynamicDistributionGroup -Identity "LDD - FR - EXPL DOMITYS RSS - DIRECTEURS"  -RecipientFilter {(RecipientType -eq 'UserMailbox') -and ((CustomAttribute3 -eq 'DRES' -or CustomAttribute3 -eq 'DSOP' -or CustomAttribute3 -eq 'DDAE' -or CustomAttribute3 -eq 'DAPP' -or CustomAttribute3 -eq 'S.MK.C002' -or CustomAttribute3 -eq 'G.RG.C001')  -and (Co -eq 'France'))}
+
+Set-DynamicDistributionGroup -Identity "DIRECTEURS" -RecipientFilter {(
+    RecipientType -eq 'UserMailbox') -and (
+    (CustomAttribute3 -eq 'DRES' -or CustomAttribute3 -eq 'DSOP' -or CustomAttribute3 -eq 'DDAE' -or CustomAttribute3 -eq 'DAPP' -or CustomAttribute3 -eq 'S.MK.C002'   -or CustomAttribute3 -eq 'G.RG.C001'
+    -and (Co -eq 'France')
+)}
+
+
+Verification: 
+
+$Filter = {(RecipientType -eq 'UserMailbox') -and (((CustomAttribute3 -eq 'DRES') -or (CustomAttribute3 -eq 'DSOP') -or (CustomAttribute3 -eq 'DDAE') -or (CustomAttribute3 -eq 'DAPP') -or (CustomAttribute3 -eq 'S.MK.C002')) -and (Co -eq 'France'))}
+Get-Recipient -RecipientPreviewFilter $Filter | ft displayname, title, StateOrProvince, co
+
+
+$Filter = {(RecipientType -eq 'UserMailbox') -and (((CustomAttribute3 -eq 'DRES') -or (CustomAttribute3 -eq 'DSOP') -or (CustomAttribute3 -eq 'DDAE') -or (CustomAttribute3 -eq 'DAPP') -or (CustomAttribute3 -eq 'S.MK.C002') -or (CustomAttribute3 -eq 'G.RG.C001')) -and (Co -eq 'France'))}
+Get-Recipient -RecipientPreviewFilter $Filter | ft displayname, title, StateOrProvince, co
+
+Pour ajouter ou supprimer des expéditeurs ou des groupes individuels sans affecter d’autres entrées existantes,
+utilisez les paramètres AcceptMessagesOnlyFrom et AcceptMessagesOnlyFromDLMembers.
+
+
+# Permettre à "Denis BABONNEAU et digital@domitys.fr d'envoyer des mails à "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS"
+
+
+
+Set-DynamicDistributionGroup  -Identity "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS" -AcceptMessagesOnlyFrom @{add="Denis BABONNEAU"}
+Set-DynamicDistributionGroup -Identity "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS" -AcceptMessagesOnlyFromDLMembers  @{add="digital@domitys.fr"}
+
+
+Pour ajouter ou supprimer des expéditeurs sans affecter les autres entrées existantes, utilisez la syntaxe suivante :
+@{Add="Sender1","Sender2"...; Remove="Sender3","Sender4"...}
+
+Set-DynamicDistributionGroup -Identity "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS" -AcceptMessagesOnlyFromDLMembers  @{add="digital@domitys.fr"}
+
+
+-AcceptMessagesOnlyFromDLMembers
+Le paramètre AcceptMessagesOnlyFromDLMembers spécifie quel groupe est autorisé à envoyer des messages à ce destinataire. 
+Les messages provenant d’autres expéditeurs sont rejetés.
+
+(groupes de distribution, groupes de sécurité à extension messagerie et groupes de distribution dynamiques).
+La spécification d’un groupe signifie que tous les membres du groupe sont autorisés à envoyer des messages à ce destinataire. 
+Vous pouvez utiliser n’importe quelle valeur qui identifie de manière unique le groupe. Par exemple :
+
+Nom
+Alias
+Nom unique
+Nom unique
+Nom unique canonique
+GUID
+Vous pouvez entrer plusieurs groupes séparés par des virgules. Pour remplacer les entrées existantes, utilisez la syntaxe suivante : Group1,Group2,...GroupN. Si les valeurs contiennent des espaces ou requièrent des guillemets, utilisez la syntaxe suivante : "Group1","Group2",..."GroupN".
 
 
 
