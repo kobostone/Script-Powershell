@@ -68,11 +68,6 @@ Delphine CASTAGNE                    UserMailbox
 ee8a0a13-3ee6-445f-afdc-9affb223cf35 UserMailbox
 
 
-Get-Recipient -RecipientPreviewFilter (get-dynamicdistributiongroup "LDD - FR - TOURS (SIÈGE - CAMPUS)").RecipientFilter -OrganizationalUnit $_.RecipientContainer
-
-LDD - FR - TOURS (SIÈGE - CAMPUS)
-
-
 ### Cas 2:Verifié
 
 $dl = Get-DynamicDistributionGroup -Identity "LDD - FR - TOURS CAMPUS"
@@ -124,9 +119,7 @@ Get-Recipient -RecipientPreviewFilter $Filter | ft displayname, title, Office, C
 
 
 
-New-DynamicDistributionGroup  -Name  "LDD - LANGUE FR-BE - RESPONSABLES SERVICES"  -RecipientFilter {(RecipientTypeDetails -eq 'UserMailbox') -and (((StateOrProvince  -like 'RSS') -or (StateOrProvince  -like 'Region') -or (StateOrProvince  -like 'Hôtel')) -and ((CustomAttribute10 -like 'Responsable*')  -or (CustomAttribute10 -eq 'SPA Manager')) -and ((LanguagesRaw -like 'fr-FR') -or (LanguagesRaw -like 'fr-Be')))}
 
--
 
 
 $Filter = "((RecipientType -eq 'UserMailbox') -and ((Office -like 'Siège Tours*') -or (Office -eq  'DOMITYS SAS - DOMITYS CAMPUS')) -and ((Office -like 'Siège Tours*') -or (Office -eq  'DOMITYS SAS - DOMITYS CAMPUS')))" 
@@ -165,24 +158,11 @@ Set-DynamicDistributionGroup -Identity "LDD - FR - TOURS CAMPUS" -AcceptMessages
 Connect-ExchangeOnline  
 New-DynamicDistributionGroup -Name "LDD - FR - EXPL - RESPONSABLES SERVICES"  -RecipientFilter "((RecipientTypeDetails -eq 'UserMailbox') -and (((StateOrProvince  -like 'RSS') -or (StateOrProvince  -like 'Region') -or (StateOrProvince  -like 'Hôtel')) -and ((CustomAttribute10 -like 'Responsable*' )  -or (CustomAttribute10 -eq  'SPA Manager')) -and (co -like 'France')))"
 
-
-
-Set-DynamicDistributionGroup -Identity "INTERNAL" -RecipientFilter {(Office -eq 'XXX') -and (company -eq 'YYY')}
-
-Set-DynamicDistributionGroup -Identity "EXTERNAL" -RecipientFilter {(Office -eq 'XXX') -and (company -eq 'EXTERNAL - ')}
-
-
-
-Pour créer une liste de distribution dynamique sur Exchange Online qui inclut les collaborateurs externes dont le nom de société débute par "EXTERNAL - ", 
-
-New-DynamicDistributionGroup -Name "External Collaborators" -RecipientFilter {Company -like "EXTERNAL - *"}
-Explication des paramètres :
--Name : Spécifie le nom de la liste de distribution dynamique.
--RecipientFilter : Définit le filtre pour inclure uniquement les destinataires dont le nom de société commence par "EXTERNAL - ".
+New-DynamicDistributionGroup  -Name  "LDD - LANGUE FR-BE - RESPONSABLES SERVICES"  -RecipientFilter {(RecipientTypeDetails -eq 'UserMailbox') -and (((StateOrProvince  -like 'RSS') -or (StateOrProvince  -like 'Region') -or (StateOrProvince  -like 'Hôtel')) -and ((CustomAttribute10 -like 'Responsable*')  -or (CustomAttribute10 -eq 'SPA Manager')) -and ((LanguagesRaw -like 'fr-FR') -or (LanguagesRaw -like 'fr-Be')))}
 
 
 
 
- 
+
 
 
