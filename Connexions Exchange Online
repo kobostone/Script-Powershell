@@ -1,3 +1,15 @@
 Import-Module ExchangeOnlineManagement    
 
 Connect-ExchangeOnline -UserPrincipalName jacob.diakite-ext@aegide.fr
+
+
+Install-Module -Name ExchangeOnlineManagement -Force -AllowClobber
+
+# Importer le module Exchange Online Management
+Import-Module ExchangeOnlineManagement
+
+# Se connecter à Exchange Online
+$adminUser = "jacob.diakite-ext@aegide.fr"
+Connect-ExchangeOnline -UserPrincipalName $adminUser -ShowProgress $true
+ou
+Connect-ExchangeOnline -UserPrincipalName jacob.diakite-ext@aegide.fr  
