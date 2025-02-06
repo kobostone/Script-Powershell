@@ -68,6 +68,12 @@ Delphine CASTAGNE                    UserMailbox
 ee8a0a13-3ee6-445f-afdc-9affb223cf35 UserMailbox
 
 
+
+$membres = Get-DynamicDistributionGroup -Identity "LDD - FR - TOURS (SIÈGE - CAMPUS - DI)"
+Get-Recipient -RecipientPreviewFilter ($membres.RecipientFilter)   |Sort-Object -Property displayname| Format-Table -Property DisplayName,title, PrimarySmtpAddress
+
+
+
 ### Cas 2:Verifié
 
 $dl = Get-DynamicDistributionGroup -Identity "LDD - FR - TOURS CAMPUS"
