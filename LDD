@@ -155,6 +155,16 @@ Set-DynamicDistributionGroup -Identity "LDD - FR - TOURS CAMPUS" -AcceptMessages
 
 
 ### Création de LDD
+
+
+$Filter = "((RecipientType -eq 'UserMailbox') -and 
+           (((Office -like 'Siège Tours*') -or (Office -eq 'DOMITYS SAS - DOMITYS CAMPUS') -or (CustomAttribute10 -eq 'Directeur Property Management')) -and 
+           ((-not(CustomAttribute3 -like 'PRES*')) -and 
+           (-not(CustomAttribute2 -like 'Prestation*')) -and 
+           (CustomAttribute3 -ne ''))))"
+
+Set-DynamicDistributionGroup -Identity "LDD - FR - TOURS (SIÈGE - CAMPUS - DI)" -RecipientFilter $Filter
+
  
 New-DynamicDistributionGroup -Name "LDD - FR - EXPL - RESPONSABLES SERVICES"  -RecipientFilter "((RecipientTypeDetails -eq 'UserMailbox') -and (((StateOrProvince  -like 'RSS') -or (StateOrProvince  -like 'Region') -or (StateOrProvince  -like 'Hôtel')) -and ((CustomAttribute10 -like 'Responsable*' )  -or (CustomAttribute10 -eq  'SPA Manager')) -and (co -like 'France')))"
 
@@ -183,6 +193,15 @@ Set-DynamicDistributionGroup -Identity "DIRECTEURS" -RecipientFilter {(
     -and (Co -eq 'France')
 )}
 
+
+
+$Filter = "((RecipientType -eq 'UserMailbox') -and 
+           (((Office -like 'Siège Tours*') -or (Office -eq 'DOMITYS SAS - DOMITYS CAMPUS') -or (CustomAttribute10 -eq 'Directeur Property Management')) -and 
+           ((-not(CustomAttribute3 -like 'PRES*')) -and 
+           (-not(CustomAttribute2 -like 'Prestation*')) -and 
+           (CustomAttribute3 -ne ''))))"
+
+Set-DynamicDistributionGroup -Identity "LDD - FR - TOURS (SIÈGE - CAMPUS - DI)" -RecipientFilter $Filter
 
 Verification: 
 
