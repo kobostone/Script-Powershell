@@ -171,6 +171,16 @@ $Filter = "((RecipientType -eq 'UserMailbox') -and
 
 Set-DynamicDistributionGroup -Identity "LDD - FR - TOURS (SIÈGE - CAMPUS - DI)" -RecipientFilter $Filter
 
+
+
+****************
+
+
+$Filter = {(RecipientTypeDetails -eq 'UserMailbox') -and (((CustomAttribute3 -eq 'RSAL' -or CustomAttribute3 -eq 'RHOR' -or CustomAttribute3 -eq 'RHER') -and (CustomAttribute4 -eq 'DOMRG1' -or CustomAttribute4 -eq 'DOMRG2' -or CustomAttribute4 -eq 'DOMRG3' -or CustomAttribute4 -eq 'DOMRG4' -or CustomAttribute4 -eq 'DOMRG5' -or CustomAttribute4 -eq 'DOMRG6')) -or ((title -like 'Responsable ménage') -and(CustomAttribute6 -eq  'DOM095')))}
+Set-DynamicDistributionGroup -Identity "LDD - FR - EXPL - RESPONSABLES DE SALLE - HOTEL & RESTAURATION" -RecipientFilter $Filter
+
+
+************
  
 New-DynamicDistributionGroup -Name "LDD - FR - EXPL - RESPONSABLES SERVICES"  -RecipientFilter "((RecipientTypeDetails -eq 'UserMailbox') -and (((StateOrProvince  -like 'RSS') -or (StateOrProvince  -like 'Region') -or (StateOrProvince  -like 'Hôtel')) -and ((CustomAttribute10 -like 'Responsable*' )  -or (CustomAttribute10 -eq  'SPA Manager')) -and (co -like 'France')))"
 
