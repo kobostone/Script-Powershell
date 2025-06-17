@@ -1,3 +1,62 @@
+ # Lister les utilisateurs ayant un accès (délégation ou droits directs) aux boîtes mail suivantes dans Exchange Online (Microsoft 365) : 
+
+# Connexion à Exchange Online (si non déjà connecté)
+Connect-ExchangeOnline
+
+# Liste des boîtes à analyser
+$mailboxes = @(
+    "sirh@ade.fr",
+    "service.paie.exploitation@ade.fr",
+    "service.paie.siege@ade.fr"
+)
+
+foreach ($mbx in $mailboxes) {
+    Write-Host "`n--- Accès à la boîte : $mbx ---" -ForegroundColor Cyan
+
+    # Délégations "Full Access"
+    $fullAccess = Get-MailboxPermission -Identity $mbx -ErrorAction SilentlyContinue | 
+        Where-Object { $_.User -notlike "NT AUTHORITY\SELF" -and $_.IsInherited -eq $false }
+
+    if ($fullAccess) {
+        Write-Host "📬 Accès complet (Full Access):" -ForegroundColor Green
+        $fullAccess | ForEach-Object {
+            Write-Host " - $($_.User)"
+        }
+    } else {
+        Write-Host "Aucun accès complet trouvé." -ForegroundColor DarkGray
+    }
+
+    # Accès à la boîte aux lettres via les autorisations de boîte aux lettres (Send As)
+    $sendAs = Get-RecipientPermission -Identity $mbx -ErrorAction SilentlyContinue
+
+    if ($sendAs) {
+        Write-Host "✉️ Autorisation 'Send As' :" -ForegroundColor Yellow
+        $sendAs | ForEach-Object {
+            Write-Host " - $($_.Trustee)"
+        }
+    } else {
+        Write-Host "Aucune autorisation 'Send As' trouvée." -ForegroundColor DarkGray
+    }
+
+    # Accès "Send on Behalf" (envoyer pour)
+    $mbxDetails = Get-Mailbox -Identity $mbx
+    if ($mbxDetails.GrantSendOnBehalfTo.Count -gt 0) {
+        Write-Host "📤 Autorisation 'Send on Behalf':" -ForegroundColor Magenta
+        $mbxDetails.GrantSendOnBehalfTo | ForEach-Object {
+            Write-Host " - $_"
+        }
+    } else {
+        Write-Host "Aucune autorisation 'Send on Behalf' trouvée." -ForegroundColor DarkGray
+    }
+}
+
+# Déconnexion propre
+# Disconnect-ExchangeOnline -Confirm:$false
+
+
+
+
+
 ### Pour lister toutes les boîtes aux lettres partagées où un utilisateur a des permissions :
 
 Get-Mailbox -RecipientTypeDetails SharedMailbox -ResultSize Unlimited | Get-MailboxPermission | Where-Object { $_.User -like "laura.poulain@domitys.fr" } | Select-Object Identity, User, AccessRights
