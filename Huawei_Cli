@@ -66,14 +66,9 @@ interface GigabitEthernet1/0/40
 [HUAWEI] sysname Switch
 [Switch] vlan batch 2   //Create VLAN 2.
 [Switch] interface gigabitethernet 0/0/1
-[Switch-GigabitEthernet0/0/1] port link-type access   //The interface connected to the PC must be the access interface. 
-The default link type of an interface is not access, so you need to manually configure the access interface.
+[Switch-GigabitEthernet0/0/1] port link-type access   
 [Switch-GigabitEthernet0/0/1] port default vlan 2   //Add GE0/0/1 to VLAN 2.
 [Switch-GigabitEthernet0/0/1] quit
-[Switch] interface gigabitethernet 0/0/2   //The configuration of GE1/0/2 is similar to that of GE0/0/1.
-[Switch-GigabitEthernet0/0/2] port link-type access 
-[Switch-GigabitEthernet0/0/2] port default vlan 2
-[Switch-GigabitEthernet0/0/2] quit
 
 
 
