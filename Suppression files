@@ -61,4 +61,49 @@ $files | ForEach-Object {
     }
 }
 
+*****
+# Définir le dossier cible
+$cheminDossier = "E:\AEG006-CHATE\Reception"
+
+# Définir le format de date attendu dans le nom du fichier (ex: YYYY-MM-DD_Nom.txt)
+$patternDate = '^(\d{4}-\d{2}-\d{2})'
+
+# Obtenir la date actuelle
+$dateActuelle = Get-Date
+
+# Fichier de logs
+$logFile = "C:\Scripts\Nettoyage_Reception_90J.log"
+
+# Vérifier si des fichiers existent
+# $files = Get-ChildItem -Path $cheminDossier -File -Recurse
+$files = Get-ChildItem -Path $cheminDossier -Recurse | Where-Object { -not $_.PSIsContainer }
+
+
+if (-not $files) {
+    exit
+}
+
+# Parcourir les fichiers du dossier et des sous-dossiers
+$files | ForEach-Object {
+    $fichier = $_.BaseName  # Utiliser uniquement le nom sans extension
+    
+    if ($fichier -match $patternDate) {
+        $dateStr = $matches[1]
+        try {
+            $dateFichier = [datetime]::ParseExact($dateStr, 'yyyy-MM-dd', $null)
+        } catch {
+            continue
+        }
+        
+        # Vérifier si la date est plus ancienne que 90 jours
+        $ageFichier = ($dateActuelle - $dateFichier).TotalDays
+        
+        if ($ageFichier -gt 90) {
+            $logMessage = "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] Suppression du fichier : $($_.FullName)"
+            $logMessage | Out-File -FilePath $logFile -Append -Encoding UTF8
+            Remove-Item $_.FullName -Force
+        }
+    } 
+}
+
 
