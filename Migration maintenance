@@ -82,6 +82,43 @@ foreach ($LDD in $LDDs) {
         $allr | Format-Table -Property DisplayName, PrimarySmtpAddress, Title, CustomAttribute6, City, Office | Export-Csv -Path $exportPath -NoTypeInformation
 
         Write-Host "Les informations de la liste '$($LDD.NomLDD)' ont été exportées vers : $exportPath"
+
+*********
+
+# Importer les données depuis un fichier CSV
+$csvPath = "C:\Scripts\maintenance.csv"
+$VillesEtNums = Import-Csv -Path $csvPath -ErrorAction Stop
+
+# Filtre pour la liste de distribution
+$FilterTemplate = {
+    param($NumDOM)
+    @"
+    (RecipientType -eq 'UserMailbox') -and 
+    (Co -eq 'France') -and 
+    (CustomAttribute6 -eq 'DOM$NumDOM') -and  
+    (CustomAttribute3 -in ('TECM', 'REMT', 'ESVE', 'CMEV', 'MESP', 'MAIN', 'MAINA'))
+"@
+}
+
+# Parcours de chaque ligne du CSV
+foreach ($villeEtNum in $VillesEtNums) {
+    try {
+        # Créer le filtre en passant le NumDOM comme argument
+        $Filter = Invoke-Expression -Command ($FilterTemplate.Invoke($villeEtNum.NumDOM))
+        
+        # Créer le nom de la liste de distribution dynamique
+        $NomLDD = "LDD - FR - EXPL - $($villeEtNum.Ville) MAINTENANCE"
+        
+        # Créer la liste de distribution dynamique
+        New-DynamicDistributionGroup -Name $NomLDD -RecipientFilter $Filter -ErrorAction Stop
+        
+        Write-Host "Liste de distribution dynamique créée : $NomLDD" -ForegroundColor Green
+    }
+    catch {
+        Write-Host "Erreur lors de la création de la liste pour $($villeEtNum.Ville) : $_" -ForegroundColor Red
+    }
+}
+
     }
     else {
         Write-Host "La liste de distribution '$($LDD.NomLDD)' n'a pas été trouvée."
