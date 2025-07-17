@@ -1,4 +1,10 @@
 
+<HUAWEI> system-view 
+[HUAWEI] ip pool iotpool 
+[HUAWEI-ip-pool-iotpool] static-bind ip-address 10.180.40.151  mac-address 0060-ef3b-2c05
+
+
+***************
 display arp | include 10.195.136.151
 IP ADDRESS      MAC ADDRESS     
 10.195.136.151  0060-ef1c-1a39 
