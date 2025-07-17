@@ -1,1 +1,4 @@
 
+display arp | include 10.195.136.151
+IP ADDRESS      MAC ADDRESS     
+10.195.136.151  0060-ef1c-1a39 
