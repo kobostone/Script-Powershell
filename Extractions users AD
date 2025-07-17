@@ -14,15 +14,13 @@ Script 1:
 Import-Module ActiveDirectory
 
 # Récupérer les informations des utilisateurs de l'AD
-Get-ADUser -Filter * -Property SamAccountName, Name, whenCreated, whenChanged, lastLogonDate, Enabled, AccountExpirationDate | 
-Select-Object @{Name="Identifiant"; Expression = {$_.SamAccountName}},
+Get-ADUser -Filter * -Property SamAccountName, Name, whenCreated, whenChanged, lastLogonDate, Enabled, AccountExpirationDate | Select-Object @{Name="Identifiant"; Expression = {$_.SamAccountName}},
               @{Name="Nom"; Expression = {$_.Name}},
               @{Name="Date de Création"; Expression = {$_.whenCreated}},
               @{Name="Date de Dernière Modification"; Expression = {$_.whenChanged}},
               @{Name="Dernière Connexion"; Expression = { if ($_.lastLogonDate) {$_.lastLogonDate } else { "Jamais connecté" }}},
               @{Name="Statut du Compte"; Expression = { if ($_.Enabled) { "Actif" } else { "Désactivé" }}},
-              @{Name="Date de Désactivation"; Expression = { if ($_.AccountExpirationDate) { $_.AccountExpirationDate } else { "N/A" }}} |
-Export-Csv -Path "C:\temp\utilisateurs_AD_test2.csv" -NoTypeInformation -Encoding UTF8
+              @{Name="Date de Désactivation"; Expression = { if ($_.AccountExpirationDate) { $_.AccountExpirationDate } else { "N/A" }}} | Export-Csv -Path "C:\temp\utilisateurs_AD_17_07.csv" -NoTypeInformation -Encoding UTF8
 
 Write-Host "Extraction des informations AD terminée."
 
@@ -119,3 +117,4 @@ Get-ADUser -Filter * -Property SamAccountName, Name, whenCreated, whenChanged, l
 
 
 Get-ADUser -Filter "SamAccountName -eq 'Administrateur'" -Server SRV-ADDS-01.it-connect.local
+
