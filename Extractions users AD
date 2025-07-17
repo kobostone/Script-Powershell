@@ -1,11 +1,10 @@
 Extraction
 
-Get-ADGroupMember -Identity "AD_PROVEXI" | Get-ADUser -Property *| ft DisplayName, mail, City, physicalDeliveryOfficeName, Title | Export-Csv -Path "C:\Temp\User_Provexi_Members.csv" -NoTypeInformation
-Get-ADGroupMember -Identity "AD_PROVEXI" |
-Where-Object { $_.objectClass -eq "user" } |
-Get-ADUser -Property DisplayName, mail, City, physicalDeliveryOfficeName, Title |
-Select-Object DisplayName, mail, City, physicalDeliveryOfficeName, Title |
-Export-Csv -Path "C:\Temp\User_Provexi_Members2.csv" -NoTypeInformation -Encoding UTF8
+1) Get-ADGroupMember -Identity "AD_PROVEXI" | Get-ADUser -Property *| ft DisplayName, mail, City, physicalDeliveryOfficeName, Title | Export-Csv -Path "C:\Temp\User_Provexi_Members.csv" -NoTypeInformation
+Get-ADGroupMember -Identity "User_Progisap" | Get-ADUser -Property *| ft DisplayName, mail, City, physicalDeliveryOfficeName, Title | Export-Csv -Path "C:\Temp\User_Progisap_Members.csv" -NoTypeInformation
+
+
+2) Get-ADGroupMember -Identity "User_progisap" | Where-Object { $_.objectClass -eq "user" } |Get-ADUser -Property DisplayName, mail, City, physicalDeliveryOfficeName, Title | Select-Object DisplayName, mail, City, physicalDeliveryOfficeName, Title |Export-Csv -Path "C:\Temp\User_Provexi_Members2.csv" -NoTypeInformation -Encoding UTF8
 
 # Récupérer tous les utilisateurs de l'Active Directory
 (sur aegidecontrol1 ou control2)
