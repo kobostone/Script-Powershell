@@ -1,0 +1,51 @@
+
+1) 
+Get-ADUser -Identity "mc.clemenson" -Properties `
+    GivenName, EmailAddress, DisplayName, mail, sAMAccountName, Enabled, `
+    Description, Company, Office, WhenCreated, WhenChanged, LastLogonDate |
+Select-Object `
+    GivenName,
+    EmailAddress,
+    DisplayName,
+    mail,
+    SamAccountName,
+    Enabled,
+    Description,
+    Company,
+    Office,
+    WhenCreated,
+    WhenChanged,
+    LastLogonDate
+
+
+2)
+
+ 
+#Nom du groupe cible
+$GroupName = "User_Progisap"
+
+# Obtenir les membres du groupe
+$GroupMembers = Get-ADGroupMember -Identity $GroupName -Recursive | Where-Object { $_.objectClass -eq "user" }
+
+# Récupérer les informations détaillées pour chaque membre
+$UserDetails = $GroupMembers | ForEach-Object {
+    Get-ADUser -Identity $_.SamAccountName -Properties `
+        GivenName, EmailAddress, DisplayName, mail, sAMAccountName, Enabled, `
+        Description, Company, Office, WhenCreated, WhenChanged, LastLogonDate |
+    Select-Object `
+        GivenName,
+        EmailAddress,
+        DisplayName,
+        mail,
+        SamAccountName,
+        Enabled,
+        Description,
+        Company,
+        Office,
+        WhenCreated,
+        WhenChanged,
+        @{Name="LastLogonDate"; Expression = { $_.LastLogonDate }}
+}
+
+# Exporter vers un fichier CSV
+$UserDetails | Export-Csv -Path "C:\Temp\User_Progisap_members.csv" -NoTypeInformation -Encoding UTF8
