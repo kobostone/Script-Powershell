@@ -1,0 +1,64 @@
+# Définir le dossier cible
+#$cheminDossier = "E:\AEG006-CHATE\Reception"
+$cheminDossier = "C:/Reception"
+
+# Définir le format de date attendu dans le nom du fichier (ex: YYYY-MM-DD_Nom.txt)
+$patternDate = '(^\d{4}-\d{2}-\d{2})'
+
+# Obtenir la date actuelle
+$dateActuelle = Get-Date
+
+# Fichier de logs
+$logFile = "C:\Scripts\Nettoyage_Reception_90J.log"
+
+# Obtenir la liste des fichiers dans le dossier et ses sous-dossiers
+#$files = Get-ChildItem -Path $cheminDossier -File -Recurse
+
+$files = Get-ChildItem -Path $cheminDossier -Recurse | Where-Object { -not $_.PSIsContainer }
+
+# Vérifier si des fichiers existent
+if (-not $files) {
+    Write-Host "Aucun fichier trouvé"
+    exit
+}
+
+# Parcourir les fichiers du dossier et des sous-dossiers
+$files | ForEach-Object {
+    $fichier = $_.BaseName  # Utiliser uniquement le nom sans extension
+
+    # Vérifier si le nom du fichier correspond au format attendu
+    if ($fichier -match $patternDate) {
+        $dateStr = $matches[1]  # Extraire la date sans l'underscore final
+        Write-Output "Date extraite : $dateStr"
+        try {
+            # Convertir la chaîne de caractères en objet DateTime
+            $dateFichier = [datetime]::ParseExact($dateStr, 'yyyy-MM-dd', $null)
+            # Calculer l'âge du fichier en jours
+            $ageFichier = ($dateActuelle - $dateFichier).TotalDays
+            Write-Output "Le fichier '$fichier' a $ageFichier jours."
+
+            # Vérifier si le fichier est plus vieux que 90 jours
+            if ($ageFichier -gt 90) {
+                # Log de la suppression
+                $logMessage = "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] Suppression du fichier : $($_.FullName)"
+                $logMessage | Out-File -FilePath $logFile -Append -Encoding UTF8
+
+                # Supprimer le fichier sans afficher de messages d'erreur
+                Remove-Item $_.FullName -Force -ErrorAction SilentlyContinue
+
+                # Vérifier si le fichier a bien été supprimé
+                if (-not (Test-Path $_.FullName)) {
+                    Write-Host "Fichier supprimé : $($_.FullName)"
+                } else {
+                    Write-Warning "Échec de la suppression du fichier : $($_.FullName)"
+                }
+            }
+        } catch {
+            Write-Warning "Erreur de conversion pour la date : $dateStr"
+        }
+    } else {
+        Write-Warning "Format de date invalide dans le nom du fichier : $fichier"
+    }
+}
+
+
