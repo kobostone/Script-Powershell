@@ -2,3 +2,45 @@
 display arp | include 10.195.136.151
 IP ADDRESS      MAC ADDRESS     
 10.195.136.151  0060-ef1c-1a39 
+
+
+
+HUAWEI----------------
+display mac-address 0014-0b8b-4b67
+display arp | include 0014-0b8b-4b67
+
+display arp interface GigabitEthernet 0/0/39
+interface GigabitEthernet1/0/39
+ description Devices-Tours UT + VoIP-Tours TG
+ port link-type access
+ port default vlan 11
+ stp bpdu-filter enable
+ stp edged-port enable
+ dhcp snooping enable
+#
+Ecran salle de reunion (VLAN 11)
+[SW-AEGIDE-TOURS-08&09-GigabitEthernet1/0/39]interface GigabitEthernet 1/0/40
+[SW-AEGIDE-TOURS-08&09-GigabitEthernet1/0/40]dis this
+#
+interface GigabitEthernet1/0/40
+ description Devices-Tours UT + VoIP-Tours TG
+ port link-type hybrid
+ port hybrid pvid vlan 11
+ port hybrid untagged vlan 11
+ stp bpdu-filter enable
+ stp edged-port enable
+ dhcp snooping enable
+
+
+
+
+
+**
+interface GigabitEthernet1/0/39
+ description Devices-Tours UT + VoIP-Tours TG
+ port link-type hybrid
+ port hybrid untagged vlan 11
+ port hybrid pvid vlan 11
+ stp bpdu-filter enable
+ stp edged-port enable
+ dhcp snooping enable
