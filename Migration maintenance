@@ -1,1 +1,33 @@
+# Importer les données depuis un fichier CSV
+$VillesEtNums = Import-Csv -Path "C:\Scripts\maintenance.csv"
 
+# Filtre pour la liste de distribution
+$FilterTemplate = {
+    param($NumDOM)
+    (RecipientTypeDetails -eq 'UserMailbox') -and 
+    (Co -like 'France') -and 
+    (CustomAttribute6 -eq "DOM$NumDOM") -and  
+    (
+        (CustomAttribute3 -like 'TECM') -or 
+        (CustomAttribute3 -like 'REMT') -or 
+        (CustomAttribute3 -like 'ESVE') -or 
+        (CustomAttribute3 -like 'CMEV') -or 
+        (CustomAttribute3 -like 'MESP') -or 
+        (CustomAttribute3 -like 'MAIN') -or 
+        (CustomAttribute3 -like 'MAINA')
+    )
+}
+
+# Parcours de chaque ligne du CSV
+foreach ($villeEtNum in $VillesEtNums) {
+    # Créer le filtre en passant le NumDOM comme argument
+    $Filter = &$FilterTemplate $villeEtNum.NumDOM
+    
+    # Créer le nom de la liste de distribution dynamique
+    $NomLDD = "LDD - FR - EXPL - $($villeEtNum.Ville) MAINTENANCE"
+    
+    # Créer la liste de distribution dynamique
+    New-DynamicDistributionGroup -Name $NomLDD -RecipientFilter $Filter
+    
+    Write-Host "Liste de distribution dynamique creee : $NomLDD"
+}
