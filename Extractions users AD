@@ -118,3 +118,35 @@ Get-ADUser -Filter * -Property SamAccountName, Name, whenCreated, whenChanged, l
 
 Get-ADUser -Filter "SamAccountName -eq 'Administrateur'" -Server SRV-ADDS-01.it-connect.local
 
+
+
+*******************
+
+
+# Récupérer tous les utilisateurs de l'Active Directory
+$users = Get-ADUser -Filter * -Property SamAccountName, Name, whenCreated, whenChanged, Enabled, AccountExpirationDate, LastLogonDate
+ 
+# Créer une liste pour stocker les résultats
+$UserList = @()
+ 
+# Parcourir chaque utilisateur et collecter les informations
+foreach ($user in $users) {
+    $UserInfo = New-Object PSObject -Property @{
+        "Identifiant"            = $user.SamAccountName
+        "Nom d'utilisateur"      = $user.Name
+        "Date de création"       = $user.whenCreated
+        "Dernière mise à jour"   = $user.whenChanged
+        "Statut"                 = if ($user.Enabled) { "Actif" } else { "Non actif" }
+        "Date de désactivation"  = if ($user.AccountExpirationDate) { $user.AccountExpirationDate } else { "N/A" }
+        "Dernière connexion"     = if ($user.LastLogonDate) { $user.LastLogonDate } else { "Jamais connecté" }
+    }
+    # Ajouter les informations à la liste
+    $UserList += $UserInfo
+}
+ 
+# Exporter les résultats dans un fichier CSV
+$UserList | Export-Csv -Path "C:\Temp\UtilisateursAD.csv" -NoTypeInformation
+ 
+# Afficher les résultats dans la console
+$UserList
+
