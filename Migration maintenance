@@ -31,3 +31,58 @@ foreach ($villeEtNum in $VillesEtNums) {
     
     Write-Host "Liste de distribution dynamique creee : $NomLDD"
 }
+
+
+******
+
+
+# Liste des nouvelles adresses et des noms de listes de distribution dynamiques
+$LDDs = @(
+    @{ NomLDD = "LDD - FR - EXPL - DOM007-MONTLUCON-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom007.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM012-MONTROND-LES-BAINS-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom012.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM024-PERPIGNAN-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom024.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM033-LYON-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom033.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM047-SETE-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom047.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM050-SAINT-CYPRIEN-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom050.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM065-MONTPELLIER-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom065.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM068-VICHY-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom068.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM071-NIMES-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom071.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM073-PERIGNAT-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom073.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM091-BEZIERS-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom091.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM106-LE PUY-EN-VELAY-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom106.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM129-AGDE-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom129.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM144-LYON-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom144.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM158-UZES-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom158.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM163-ALES-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom163.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM165-GLEIZE-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom165.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM189-CARCASSONNE-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom189.maint@domitys.fr"},
+    @{ NomLDD = "LDD - FR - EXPL - DOM067-CASTELNAU-LE-LEZ-MAINTENANCE"; NouvelleAdresse = "fr.expl.dom067.maint@domitys.fr"}
+)
+
+# Parcours de chaque élément de la liste des LDDs
+foreach ($LDD in $LDDs) {
+
+    # Récupérer la liste de distribution dynamique en fonction de son nom
+    $dl = Get-DynamicDistributionGroup -Identity $LDD.NomLDD
+
+    # Vérifier si la liste de distribution dynamique existe
+    if ($dl) {
+        # Récupérer les destinataires associés à cette liste de distribution dynamique
+        $allr = Get-Recipient -RecipientPreviewFilter $dl.RecipientFilter -OrganizationalUnit $dl.RecipientContainer
+
+        # Créer un nom de fichier unique pour chaque export CSV basé sur le nom de la LDD
+        $exportPath = "C:\Rscripts\Maintenace_Sud_centre_$($LDD.NomLDD).csv"
+        
+        # Assurez-vous que le répertoire existe
+        if (-not (Test-Path "C:\Rscripts")) {
+            New-Item -ItemType Directory -Path "C:\Rscripts"
+        }
+
+        # Exporter les informations des destinataires dans un fichier CSV unique pour chaque LDD
+        $allr | Format-Table -Property DisplayName, PrimarySmtpAddress, Title, CustomAttribute6, City, Office | Export-Csv -Path $exportPath -NoTypeInformation
+
+        Write-Host "Les informations de la liste '$($LDD.NomLDD)' ont été exportées vers : $exportPath"
+    }
+    else {
+        Write-Host "La liste de distribution '$($LDD.NomLDD)' n'a pas été trouvée."
+    }
