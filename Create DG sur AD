@@ -1,0 +1,14 @@
+Set-ADGroup -Identity "maintenance.toulouse-peira-rosa" -Add @{msExchHideFromAddressLists=$true}
+
+Set-ADGroup -Identity "maintenance.toulouse-peira-rosa" -Add @{proxyAddresses = @("SMTP:maintenance.toulouse-peira-rosa@domitys.fr")}
+
+Set-ADGroup -Identity "maintenance.toulouse-peira-rosa" -Add @{displayName = @("LD - Maintenance - Toulouse / Peira Rosa")}
+
+
+ # Mise à jour des attributs mail, proxy, masquage GAL
+            Set-ADGroup -Identity "maintenance.domainegrandbaie" `
+                        -Add @{
+                            mail = maintenance@domainegrandbaie.com
+                            proxyAddresses = @("SMTP:maintenance@domainegrandbaie.com")
+                            msExchHideFromAddressLists = $true
+							}
