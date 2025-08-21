@@ -1,0 +1,25 @@
+Set-DynamicDistributionGroup -Identity "LDD - EU - EXPL DOMITYS RSS - DIRECTEURS" -RecipientFilter {
+    (RecipientType -eq 'UserMailbox') -and
+    (
+        ((Co -eq 'France') -or (Co -like 'Belgique*') -or (Co -like 'Italie')) -and
+        ((CustomAttribute3 -eq 'DRES') -or (CustomAttribute3 -eq 'DSOP') -or  (CustomAttribute3 -eq 'R.RS.C001') )
+    )
+}
+
+
+
+Set-DynamicDistributionGroup -Identity "LDD - FR - EXPL DOMITYS RSS - DIRECTEURS" -RecipientFilter {
+    (RecipientType -eq 'UserMailbox') -and
+    (
+        (
+            (CustomAttribute3 -eq 'DRES') -or
+            (CustomAttribute3 -eq 'DSOP') -or
+            (CustomAttribute3 -eq 'DDAE') -or
+            (CustomAttribute3 -eq 'DAPP') -or
+            (CustomAttribute3 -eq 'S.MK.C002') -or
+            (CustomAttribute3 -eq 'G.RG.C001') -or
+            (CustomAttribute3 -eq 'R.RS.C001')
+        ) -and
+        (Co -eq 'France')
+    )
+}
