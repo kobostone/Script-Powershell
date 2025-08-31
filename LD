@@ -1,0 +1,59 @@
+# Utilisateur à tester
+$UserToCheck = "olivier.wigniolle@aegide.fr"
+$User = Get-Recipient $UserToCheck
+
+# Récupérer toutes les Dynamic Distribution Groups
+$DDGs = Get-DynamicDistributionGroup -ResultSize Unlimited
+$Results = @()
+
+foreach ($ddg in $DDGs) {
+    $Authorized = $false
+    $Reason = "Bloqué par défaut"
+
+    # Cas 1 : Expéditeurs spécifiés (AcceptMessagesOnlyFrom)
+    if ($ddg.AcceptMessagesOnlyFrom) {
+        $allowedSenders = foreach ($sender in $ddg.AcceptMessagesOnlyFrom) {
+            try {
+                (Get-Recipient $sender).PrimarySmtpAddress
+            } catch {
+                $sender   # si jamais l'objet n'est pas résolvable
+            }
+        }
+
+        if ($allowedSenders -contains $UserToCheck) {
+            $Authorized = $true
+            $Reason = "Autorisé car expéditeur spécifié"
+        } else {
+            $Authorized = $false
+            $Reason = "Bloqué : seuls $($allowedSenders -join ', ') sont autorisés"
+        }
+    }
+    # Cas 2 : N’autoriser que les messages internes
+    elseif ($ddg.RequireSenderAuthenticationEnabled -eq $true) {
+        if ($User.RecipientType -match "Mailbox|MailUser") {
+            $Authorized = $true
+            $Reason = "Autorisé car utilisateur interne (organisation)"
+        } else {
+            $Authorized = $false
+            $Reason = "Bloqué car expéditeur externe"
+        }
+    }
+    # Cas 3 : Liste ouverte à tous
+    else {
+        $Authorized = $true
+        $Reason = "Ouvert à tous (aucune restriction)"
+    }
+
+    $Results += [PSCustomObject]@{
+        "Nom de la Liste" = $ddg.DisplayName
+        "Adresse"         = $ddg.PrimarySmtpAddress
+        "OW Autorisé ?" = if ($Authorized) { "OUI" } else { "NON" }
+        "Raison"          = $Reason
+    }
+}
+
+# Export CSV
+$ExportPath = "C:\Temp\DynamicDG_Autorisations2.csv"
+$Results | Export-Csv -Path $ExportPath -NoTypeInformation -Encoding UTF8
+
+Write-Host "✅ Résultat exporté dans $ExportPath"
