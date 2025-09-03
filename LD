@@ -57,3 +57,45 @@ $ExportPath = "C:\Temp\DynamicDG_Autorisations2.csv"
 $Results | Export-Csv -Path $ExportPath -NoTypeInformation -Encoding UTF8
 
 Write-Host "✅ Résultat exporté dans $ExportPath"
+
+
+===========================================================================
+
+Import-Module ActiveDirectory
+
+# Récupération des groupes de distribution universelle
+$Groups = Get-ADGroup -Filter {GroupCategory -eq "Distribution" -and GroupScope -eq "Universal"} -Properties authOrig, DistinguishedName
+
+$Results = @()
+
+foreach ($Group in $Groups) {
+    if ($Group.authOrig) {
+        foreach ($Auth in $Group.authOrig) {
+            # On récupère aussi l'objet utilisateur/groupe lié
+            $AuthObject = Get-ADObject -Identity $Auth -Properties sAMAccountName, DistinguishedName
+            
+            $Results += [PSCustomObject]@{
+                GroupName       = $Group.Name
+                GroupDN         = $Group.DistinguishedName
+                AuthorizedDN    = $AuthObject.DistinguishedName
+                AuthorizedSAM   = $AuthObject.sAMAccountName
+            }
+        }
+    }
+    else {
+        # Cas où aucun authOrig n'est défini
+        $Results += [PSCustomObject]@{
+            GroupName       = $Group.Name
+            GroupDN         = $Group.DistinguishedName
+            AuthorizedDN    = "<Aucun>"
+            AuthorizedSAM   = "<Aucun>"
+        }
+    }
+}
+
+# Affichage dans la console
+$Results | Format-Table -AutoSize
+
+# Export CSV pour exploitation dans Excel
+$Results | Export-Csv -Path "C:\Temp\DistributionGroups_authOrig_Detail2.csv" -NoTypeInformation -Encoding UTF8
+
