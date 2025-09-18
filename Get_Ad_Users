@@ -1,3 +1,4 @@
+Get-ADUser -Filter {Name -like "Jacob*"} -Properties mail,department
 
 1) 
 Get-ADUser -Identity "mc.clemenson" -Properties `
