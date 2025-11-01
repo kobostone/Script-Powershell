@@ -1,1 +1,16 @@
 Get-ADGroup -Filter 'name -like "Access*"' | Set-ADGroup -Description "Access Group"
+
+
+Renommer le groupe Active Directory à l'aide de Set-AdGroup
+Il est très simple de renommer des groupes Active Directory à l’aide des applets de commande get-adgroup et set-adgroup. rename-adobject et set-adgroup deux commandes requises pour renommer.
+
+Get-ADGroup -identity “GroupName” | %{set-adgroup -samaccountname “ShortName”; $_ | rename-adobject -newname “ShortName”}
+
+
+Ajouter une adresse e-mail au groupe de sécurité AD à l'aide de Set-AdGroup -Replace
+Supposons qu'un fichier CSV comporte deux colonnes, la première colonne est le nom du groupe et le nom de la deuxième colonne est une adresse e-mail.
+
+Pour définir une adresse e-mail pour le groupe de sécurité publicitaire, vous pouvez utiliser la propriété de messagerie comme indiqué dans le code ci-dessous
+
+Import-CSV -path 'C:\PowerShell\AD-GroupScript\AddEmailToGroups.csv' |
+ForEach-Object {Set-ADGroup -Identity $_.group -Replace @{mail = "$($_.mail)"}}
