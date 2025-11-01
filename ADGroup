@@ -1,0 +1,1 @@
+Get-ADGroup -Filter 'name -like "Access*"' | Set-ADGroup -Description "Access Group"
