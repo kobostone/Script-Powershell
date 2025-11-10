@@ -6,3 +6,15 @@ Get-SPODeletedSite -IncludeOnlyPersonalSite | Where-Object {$_.Url -like "*maint
  Get-SPODeletedSite -IncludeOnlyPersonalSite | Where-Object {$_.Url -like "*maintenance*"}| Format-Table Url, DeletionTime
 
 AVERTISSEMENT : More results were found but were not returned.  Use '-Limit ALL' to return all possible results.
+
+
+
+
+ Get-SPODeletedSite | Select Url, DeletionTime, StorageQuota
+
+Url                                                                                                                     DeletionTime        StorageQuota
+---                                                                                                                     ------------        ------------
+https://aegide.sharepoint.com/sites/Teams-BPACKDTG10                                                                    21/08/2025 09:53:15     26214400
+https://aegide.sharepoint.com/sites/Teams-TEST_fcczkr                                                                   17/10/2025 13:06:11     26214400
+https://aegide.sharepoint.com/sites/Teams-Comitditorial                                                                 08/08/2025 07:36:42     26214400
+https://aegide.sharepoint.com/sites/DAF                    
