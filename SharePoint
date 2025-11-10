@@ -1,3 +1,21 @@
+
+
+
+Connect-SPOService -Url https://aegide-admin.sharepoint.com
+
+Connect-SPOService -Url https://aegide-admin.sharepoint.com
+PS C:\Users\jacob.diakite-ext> Get-SPOTenant | Select OrphanedPersonalSitesRetentionPeriod
+
+
+
+Restore-MgUser -UserId user@domain.com
+
+
+Get-SPODeletedSite | Where-Object {$_.Url -like "*aegide-my.sharepoint.com/personal/*"}
+
+
+ Get-SPODeletedSite -IncludeOnlyPersonalSite | Format-Table Url
+
 Get-SPODeletedSite -IncludeOnlyPersonalSite | Format-Table Url, DeletionTime
 
 Get-SPODeletedSite -IncludeOnlyPersonalSite | Where-Object {$_.Url -like "*maintenance*"}| Format-Table Url, DeletionTime
