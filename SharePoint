@@ -1,0 +1,8 @@
+Get-SPODeletedSite -IncludeOnlyPersonalSite | Format-Table Url, DeletionTime
+
+Get-SPODeletedSite -IncludeOnlyPersonalSite | Where-Object {$_.Url -like "*maintenance*"}| Format-Table Url, DeletionTime
+
+
+ Get-SPODeletedSite -IncludeOnlyPersonalSite | Where-Object {$_.Url -like "*maintenance*"}| Format-Table Url, DeletionTime
+
+AVERTISSEMENT : More results were found but were not returned.  Use '-Limit ALL' to return all possible results.
