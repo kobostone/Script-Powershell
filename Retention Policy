@@ -1,0 +1,158 @@
+✅ Voici comment créer ta balise “Supprimer après 2 ans (Archive)” en PowerShell
+
+🔹 Étape 1 – Se connecter à Exchange Online PowerShell
+Connect-ExchangeOnline -UserPrincipalName ton.admin@entreprise.com
+
+🔹 Étape 2 – Créer la balise de rétention (Default Archive Policy Tag)
+
+
+New-RetentionPolicyTag -Name "Supprimer après 2 ans (Archive)" `
+-Type Archive `
+-RetentionAction PermanentlyDelete `
+-AgeLimitForRetention 730 `
+-RetentionEnabled $true `
+-Comment "Supprime automatiquement les e-mails dans la boîte d’archive après 2 ans"
+
+🧠 Explications :
+Paramètre	Rôle
+-Type Archive	indique que la balise s’applique à la boîte d’archive par défaut
+-RetentionAction PermanentlyDelete	supprime les éléments après expiration
+-AgeLimitForRetention 730	période de 2 ans
+-RetentionEnabled $true	active la balise
+-Comment	optionnel, pour documentation
+
+
+🔹 Étape 3 – Créer ou modifier une stratégie de rétention
+
+Si tu veux en créer une nouvelle :
+
+New-RetentionPolicy -Name "MRM – Supprimer après 2 ans (Archive)" `
+-RetentionPolicyTagLinks "Supprimer après 2 ans (Archive)"
+
+
+Sinon, pour l’ajouter à une stratégie existante :
+
+Set-RetentionPolicy -Identity "Default MRM Policy" `
+-RetentionPolicyTagLinks @{Add="Supprimer après 2 ans (Archive)"}
+
+🔹 Étape 4 – Assigner la stratégie à la boîte aux lettres
+
+Pour une boîte spécifique :
+
+Set-Mailbox -Identity "relationclient@domitys.fr" -RetentionPolicy "MRM – Supprimer après 2 ans (Archive)"
+
+
+🔹 Étape 5 – Forcer le traitement (facultatif)
+
+Pour appliquer immédiatement la politique sur une boîte :
+
+Start-ManagedFolderAssistant -Identity "relationclient@domitys.fr"  -Verbose
+
+Start-ManagedFolderAssistant -Identity "ton.utilisateur@domaine.com" -Verbose
+
+
+
+Get-Mailbox -Identity "relationclient@domitys.fr" | Get-MailboxStatistics | Select DisplayName,LastProcessedTime
+
+Search-Mailbox -Identity  "relationclient@domitys.fr"  -SearchQuery "Received:<01/01/2024" -EstimateResultOnly
+
+
+# Définir le nom de la recherche
+$SearchName = "MailsPlusDe2Ans"
+
+# Créer la recherche
+
+Connect-IPPSSession 
+
+New-ComplianceSearch -Name $SearchName -ExchangeLocation "relationclient@domitys.fr" -ContentMatchQuery 'received:<01/01/2023'
+
+
+
+⚙️ Résultat
+
+✅ Tous les éléments de la boîte d’archive en ligne de l’utilisateur seront supprimés automatiquement après 2 ans.
+✅ La politique s’exécute automatiquement via le service Managed Folder Assistant (géré par Exchange Online).
+
+🧭 En résumé
+Étape	Action	Fait via
+1	Connexion à PowerShell	PowerShell
+2	Créer une balise “Default Archive Policy Tag”	PowerShell
+3	Créer ou mettre à jour une stratégie MRM	PowerShell
+4	Assigner la stratégie à une boîte	PowerShell
+5	Forcer l’exécution du Managed Folder Assistant	PowerShell
+
+
+
+<# 
+    Script : Vérification de la stratégie MRM Exchange Online
+    Auteur : ChatGPT (pour toi 😉)
+    Description : 
+    Vérifie la stratégie de rétention, les balises associées 
+    et la dernière exécution du Managed Folder Assistant pour une boîte aux lettres.
+#>
+
+
+
+# --- Définir l'utilisateur à vérifier ---
+$MailboxUser = "relationclient@domitys.fr"
+
+Write-Host "=== Vérification de la stratégie MRM pour $MailboxUser ===" -ForegroundColor Cyan
+
+# --- Récupérer la stratégie MRM assignée ---
+$Mailbox = Get-Mailbox -Identity $MailboxUser
+$PolicyName = $Mailbox.RetentionPolicy
+Write-Host "Stratégie MRM assignée : $PolicyName" -ForegroundColor Green
+
+# --- Lister les balises associées à cette stratégie ---
+Write-Host "`nBalises de rétention associées :" -ForegroundColor Yellow
+$Tags = (Get-RetentionPolicy -Identity $PolicyName).RetentionPolicyTagLinks
+$Tags | ForEach-Object { Write-Host " - $_" }
+
+# --- Obtenir la dernière exécution du Managed Folder Assistant ---
+Write-Host "`nDernière exécution du Managed Folder Assistant :" -ForegroundColor Yellow
+$Stats = Get-MailboxStatistics -Identity $MailboxUser | Select DisplayName, LastProcessedTime
+$Stats | Format-Table -AutoSize
+
+# --- (Optionnel) Vérifier les paramètres de la balise spécifique ---
+Write-Host "`nDétails des balises :" -ForegroundColor Yellow
+$Tags | ForEach-Object {
+    $TagDetails = Get-RetentionPolicyTag -Identity $_ | Select Name, Type, RetentionAction, AgeLimitForRetention, RetentionEnabled
+    $TagDetails | Format-Table -AutoSize
+}
+
+Write-Host "`n✅ Vérification terminée pour $MailboxUser" -ForegroundColor Cyan
+
+Souhaites-tu que je te donne une version du script complète, prête à copier-coller (avec variables que tu modifies pour ton tenant) ?
+
+
+# Voir si l'archive est activée
+Get-Mailbox -Identity "relationclient@domitys.fr" | Select ArchiveStatus,ArchiveQuota,ArchiveName
+
+# Vérifier la stratégie de rétention associée
+Get-Mailbox -Identity "relationclient@domitys.fr" | Select RetentionPolicy
+
+# Voir quelles balises sont incluses dans cette stratégie
+(Get-RetentionPolicy -Identity "MRM – Supprimer après 2 ans (Archive)").RetentionPolicyTagLinks
+
+
+(Get-RetentionPolicy -Identity "MRM – Supprimer après 2 ans (Archive)").RetentionPolicyTagLinks
+Supprimer après 2 ans (Archive)
+6 Mois Archivage
+
+
+
+Get-RetentionPolicyTag -Identity "NomDeLaBalise"
+
+Get-Mailbox -Identity "relationclient@domitys.fr" | Select DisplayName,ArchiveStatus,ArchiveQuota,ArchiveWarningQuota,ArchiveWarningSize,ArchiveDatabase,ArchiveDomain,ArchiveGuid,ArchiveState
+
+DisplayName         : Relation Clients Domitys
+ArchiveStatus       : Active
+ArchiveQuota        : 110 GB (118,111,600,640 bytes)
+ArchiveWarningQuota : 100 GB (107,374,182,400 bytes)
+ArchiveWarningSize  :
+ArchiveDatabase     : FRAP264DG395-db310
+ArchiveDomain       :
+ArchiveGuid         : 4d7ba634-b59d-4442-be67-159a72ca8791
+ArchiveState        : Local
+
+
