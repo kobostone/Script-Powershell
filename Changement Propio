@@ -1,0 +1,6 @@
+takeown /F "E:\DOM133-ECOUF\Commercial" /R /D O
+Ensuite, donne les droits :
+
+powershell
+Copier le code
+icacls "E:\DOM133-ECOUF\Commercial" /grant Administrators:F /T
